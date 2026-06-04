@@ -1,0 +1,2157 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>NokosOTP — Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f0f5ff;--surf:#f8fbff;--white:#ffffff;
+  --card:#ffffff;--card2:#f3f7ff;
+  --border:#dde9ff;--border2:#c8d9ff;
+  --blue-50:#eff6ff;--blue-100:#dbeafe;--blue-200:#bfdbfe;
+  --blue-500:#3b82f6;--blue-600:#2563eb;--blue-700:#1d4ed8;--blue-800:#1e40af;--blue-900:#1e3a8a;
+  --sky:#0ea5e9;--indigo:#6366f1;
+  --hover:#eef4ff;--active-nav:#eff6ff;
+  --text:#0f172a;--muted:#64748b;--dim:#94a3b8;
+  --success:#10b981;--warn:#f59e0b;--danger:#ef4444;--purple:#a855f7;
+  --font-d:'Bricolage Grotesque',sans-serif;
+  --font-b:'Plus Jakarta Sans',sans-serif;
+  --font-m:'JetBrains Mono',monospace;
+  --r:12px;--rs:8px;
+  --sh:0 2px 16px rgba(37,99,235,.07);
+  --sh2:0 8px 32px rgba(37,99,235,.12);
+  --nav-w:240px;
+}
+html,body{height:100%;font-family:var(--font-b);background:var(--bg);color:var(--text);overflow:hidden}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--blue-200);border-radius:10px}
+
+/* ── Layout ── */
+.app{display:flex;height:100vh;overflow:hidden}
+
+/* ── Sidebar ── */
+.sidebar{
+  width:var(--nav-w);flex-shrink:0;
+  background:var(--white);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  height:100vh;overflow-y:auto;overflow-x:hidden;
+  transition:transform .25s ease;
+  box-shadow:2px 0 12px rgba(37,99,235,.05);
+}
+.sidebar-header{
+  padding:20px 18px 16px;
+  display:flex;align-items:center;gap:10px;
+  border-bottom:1px solid var(--border);
+}
+.sidebar-logo-icon{
+  width:36px;height:36px;border-radius:10px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--blue-600),var(--sky));
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 10px rgba(37,99,235,.3);
+}
+.sidebar-logo-icon svg{width:18px;height:18px;color:#fff}
+.sidebar-logo-icon img{width:20px;height:20px;object-fit:contain;filter:brightness(10)}
+.sidebar-brand{font-family:var(--font-d);font-weight:800;font-size:1.1rem;color:var(--blue-800)}
+.sidebar-nav{padding:12px 10px;flex:1}
+.nav-section-label{
+  font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+  color:var(--dim);padding:8px 8px 6px;margin-top:8px;
+}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 12px;border-radius:var(--rs);
+  cursor:pointer;color:var(--muted);font-weight:500;font-size:.875rem;
+  transition:all .18s;margin-bottom:2px;
+  border:1.5px solid transparent;
+}
+.nav-item svg{width:18px;height:18px;flex-shrink:0;transition:transform .18s}
+.nav-item:hover{background:var(--hover);color:var(--blue-700)}
+.nav-item:hover svg{transform:translateX(2px)}
+.nav-item.active{
+  background:var(--blue-50);color:var(--blue-700);font-weight:600;
+  border-color:var(--blue-200);
+}
+.nav-item.active svg{color:var(--blue-600)}
+.sidebar-footer{
+  padding:14px 10px;border-top:1px solid var(--border);
+}
+.user-pill{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;border-radius:var(--rs);
+  background:var(--blue-50);border:1px solid var(--blue-100);
+}
+.user-avatar{
+  width:34px;height:34px;border-radius:50%;
+  background:linear-gradient(135deg,var(--blue-600),var(--sky));
+  color:#fff;font-weight:700;font-size:.8rem;font-family:var(--font-d);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.user-info{flex:1;min-width:0}
+.user-name{font-weight:600;font-size:.82rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.user-bal{font-size:.72rem;color:var(--blue-600);font-weight:600;font-family:var(--font-m)}
+.btn-logout{
+  background:none;border:none;cursor:pointer;color:var(--dim);padding:4px;
+  border-radius:6px;display:flex;transition:color .2s,background .2s;
+}
+.btn-logout:hover{color:var(--danger);background:#fef2f2}
+.btn-logout svg{width:15px;height:15px}
+
+/* ── Main ── */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{
+  height:58px;flex-shrink:0;
+  display:flex;align-items:center;padding:0 24px;gap:16px;
+  background:var(--white);border-bottom:1px solid var(--border);
+  box-shadow:0 1px 8px rgba(37,99,235,.05);
+}
+.topbar-menu{
+  background:none;border:none;cursor:pointer;color:var(--muted);
+  display:none;padding:6px;border-radius:var(--rs);
+}
+.topbar-menu:hover{background:var(--hover);color:var(--blue-600)}
+.topbar-menu svg{width:20px;height:20px}
+.topbar-title{font-family:var(--font-d);font-weight:700;font-size:1.05rem;color:var(--text);flex:1}
+.topbar-bal{
+  display:flex;align-items:center;gap:8px;
+  background:var(--blue-50);border:1px solid var(--blue-100);
+  border-radius:999px;padding:6px 14px;cursor:pointer;transition:background .2s;
+}
+.topbar-bal:hover{background:var(--blue-100)}
+.topbar-bal svg{width:15px;height:15px;color:var(--blue-600)}
+.topbar-bal span{font-size:.82rem;font-weight:700;color:var(--blue-700);font-family:var(--font-m)}
+.topbar-avatar{
+  width:34px;height:34px;border-radius:50%;
+  background:linear-gradient(135deg,var(--blue-600),var(--sky));
+  color:#fff;font-weight:700;font-size:.8rem;font-family:var(--font-d);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:0 2px 8px rgba(37,99,235,.25);
+}
+
+/* ── Content ── */
+.content{flex:1;overflow-y:auto;padding:28px 28px}
+.page{display:none}
+.page.active{display:block}
+
+/* ── Page header ── */
+.page-header{margin-bottom:24px}
+.page-header h1{font-family:var(--font-d);font-size:1.5rem;font-weight:800;color:var(--text);margin-bottom:4px}
+.page-header p{font-size:.875rem;color:var(--muted)}
+
+/* ── Stat cards ── */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:28px}
+.stat-card{
+  border-radius:var(--r);padding:20px 20px;border:1.5px solid var(--border);
+  background:var(--white);position:relative;overflow:hidden;transition:all .2s;
+}
+.stat-card:hover{border-color:var(--blue-300);box-shadow:var(--sh2);transform:translateY(-2px)}
+.stat-card-bg{
+  position:absolute;right:-16px;top:-16px;width:80px;height:80px;border-radius:50%;
+  opacity:.08;
+}
+.stat-blue{background:var(--blue-600)}
+.stat-green{background:var(--success)}
+.stat-warn{background:var(--warn)}
+.stat-purple{background:var(--purple)}
+.stat-card-icon{
+  width:40px;height:40px;border-radius:10px;margin-bottom:14px;
+  display:flex;align-items:center;justify-content:center;
+}
+.stat-card-icon svg{width:20px;height:20px}
+.sc-blue .stat-card-icon{background:#dbeafe;color:var(--blue-600)}
+.sc-green .stat-card-icon{background:#d1fae5;color:var(--success)}
+.sc-warn  .stat-card-icon{background:#fef3c7;color:var(--warn)}
+.sc-purple .stat-card-icon{background:#f3e8ff;color:var(--purple)}
+.stat-label{font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:6px}
+.stat-value{font-family:var(--font-d);font-size:1.5rem;font-weight:800;color:var(--text)}
+
+/* ── Section cards ── */
+.section-card{
+  background:var(--white);border:1.5px solid var(--border);
+  border-radius:var(--r);overflow:visible;margin-bottom:20px;
+}
+.sc-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 20px;border-bottom:1px solid var(--border);
+}
+.sc-head-left{display:flex;align-items:center;gap:10px}
+.sc-head-icon{
+  width:32px;height:32px;border-radius:8px;background:var(--blue-50);
+  display:flex;align-items:center;justify-content:center;color:var(--blue-600);
+}
+.sc-head-icon svg{width:16px;height:16px}
+.sc-head h3{font-family:var(--font-d);font-size:.95rem;font-weight:700;color:var(--text)}
+.sc-body{padding:16px 20px}
+
+/* ── Tables ── */
+.data-table{width:100%;border-collapse:collapse;font-size:.82rem}
+.data-table th{
+  text-align:left;padding:10px 12px;
+  background:var(--blue-50);color:var(--muted);font-weight:600;font-size:.72rem;
+  text-transform:uppercase;letter-spacing:.05em;
+  border-bottom:1px solid var(--border);
+}
+.data-table td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:middle;color:var(--text)}
+.data-table tr:last-child td{border-bottom:none}
+.data-table tr:hover td{background:var(--blue-50)}
+.data-table .mono{font-family:var(--font-m);font-size:.8rem;color:var(--blue-700)}
+
+/* ── Badges ── */
+.badge{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:3px 10px;border-radius:999px;font-size:.72rem;font-weight:600;
+}
+.badge-active   {background:#dbeafe;color:#1d4ed8}
+.badge-success  {background:#d1fae5;color:#065f46}
+.badge-warn     {background:#fef3c7;color:#92400e}
+.badge-danger   {background:#fee2e2;color:#991b1b}
+.badge-muted    {background:#f1f5f9;color:#475569}
+.badge-purple   {background:#f3e8ff;color:#6d28d9}
+
+/* ── Buttons ── */
+.btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:8px 16px;border-radius:var(--rs);border:none;
+  font-size:.82rem;font-weight:600;cursor:pointer;
+  transition:all .18s;font-family:var(--font-b);
+}
+.btn svg{width:14px;height:14px}
+.btn-blue{background:var(--blue-600);color:#fff;box-shadow:0 2px 8px rgba(37,99,235,.25)}
+.btn-blue:hover{background:var(--blue-700);box-shadow:0 4px 12px rgba(37,99,235,.35)}
+.btn-outline-blue{background:var(--blue-50);color:var(--blue-700);border:1.5px solid var(--blue-200)}
+.btn-outline-blue:hover{background:var(--blue-100);border-color:var(--blue-400)}
+.btn-danger-soft{background:#fef2f2;color:var(--danger);border:1.5px solid #fecaca}
+.btn-danger-soft:hover{background:#fee2e2}
+.btn-success-soft{background:#f0fdf4;color:var(--success);border:1.5px solid #bbf7d0}
+.btn-success-soft:hover{background:#dcfce7}
+.btn-sm{padding:5px 12px;font-size:.75rem}
+.btn-lg{padding:11px 22px;font-size:.9rem}
+.btn-block{width:100%;justify-content:center}
+
+/* ── Loading / Empty ── */
+.loading{display:flex;align-items:center;justify-content:center;padding:40px;gap:10px;color:var(--muted)}
+.spinner{width:20px;height:20px;border:2px solid var(--border2);border-top-color:var(--blue-600);border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty-state{text-align:center;padding:40px 20px;color:var(--muted)}
+.empty-icon{margin:0 auto 12px;width:48px;height:48px;background:var(--blue-50);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--blue-400)}
+.empty-icon svg{width:22px;height:22px}
+.empty-state p{font-size:.875rem}
+
+/* ── Toast ── */
+.toast-wrap{position:fixed;top:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px}
+.toast{
+  display:flex;align-items:center;gap:10px;
+  padding:12px 16px;border-radius:var(--r);
+  background:var(--white);box-shadow:var(--sh2);
+  border:1.5px solid var(--border);min-width:260px;max-width:360px;
+  animation:toastIn .25s ease forwards;
+}
+.toast.out{animation:toastOut .2s ease forwards}
+@keyframes toastIn{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:none}}
+@keyframes toastOut{to{opacity:0;transform:translateX(16px)}}
+.toast-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.toast-icon svg{width:14px;height:14px}
+.toast-s .toast-icon{background:#d1fae5;color:var(--success)}
+.toast-e .toast-icon{background:#fee2e2;color:var(--danger)}
+.toast-i .toast-icon{background:#dbeafe;color:var(--blue-600)}
+.toast-w .toast-icon{background:#fef3c7;color:var(--warn)}
+.toast-msg{font-size:.83rem;font-weight:500;color:var(--text);flex:1}
+.toast-close{background:none;border:none;cursor:pointer;color:var(--dim);display:flex}
+.toast-close svg{width:14px;height:14px}
+
+/* ── Modal ── */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:500;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .2s;backdrop-filter:blur(4px);
+}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{
+  background:var(--white);border-radius:20px;width:90%;max-width:460px;
+  box-shadow:0 24px 64px rgba(15,23,42,.25);
+  transform:scale(.96) translateY(8px);transition:transform .2s;
+}
+.modal-overlay.open .modal{transform:none}
+.modal-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 22px;border-bottom:1px solid var(--border);
+}
+.modal-head h3{font-family:var(--font-d);font-size:1rem;font-weight:700;color:var(--text)}
+.modal-close{background:none;border:none;cursor:pointer;color:var(--dim);padding:4px;border-radius:6px;display:flex}
+.modal-close:hover{background:var(--hover);color:var(--danger)}
+.modal-close svg{width:16px;height:16px}
+.modal-body{padding:22px}
+.modal-footer{display:flex;gap:10px;padding:14px 22px;border-top:1px solid var(--border)}
+
+/* ── Form ── */
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-group{margin-bottom:14px}
+.form-label{display:block;font-size:.78rem;font-weight:600;color:var(--text);margin-bottom:5px}
+.input-wrap{position:relative}
+.input-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--dim);display:flex;pointer-events:none}
+.input-icon svg{width:15px;height:15px}
+.form-input{
+  width:100%;padding:9px 10px 9px 32px;
+  border:1.5px solid var(--border2);border-radius:var(--rs);
+  background:var(--surf);color:var(--text);font-size:.875rem;
+  font-family:var(--font-b);transition:border-color .2s,box-shadow .2s;outline:none;
+}
+.form-input:focus{border-color:var(--blue-500);box-shadow:0 0 0 3px rgba(37,99,235,.1);background:#fff}
+.form-input.no-icon{padding-left:10px}
+.form-select{
+  width:100%;padding:9px 10px;
+  border:1.5px solid var(--border2);border-radius:var(--rs);
+  background:var(--surf);color:var(--text);font-size:.875rem;
+  font-family:var(--font-b);outline:none;cursor:pointer;
+  transition:border-color .2s;
+}
+.form-select:focus{border-color:var(--blue-500);background:#fff}
+
+/* ── Server toggle ── */
+.server-toggle{display:flex;background:var(--blue-50);border-radius:10px;padding:4px;gap:4px;margin-bottom:20px}
+.server-btn{
+  flex:1;padding:9px 12px;border-radius:8px;border:none;background:none;
+  cursor:pointer;font-size:.82rem;font-weight:600;color:var(--muted);
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  transition:all .2s;font-family:var(--font-b);
+}
+.server-btn svg{width:15px;height:15px}
+.server-btn.active{background:var(--white);color:var(--blue-700);box-shadow:0 2px 8px rgba(37,99,235,.12)}
+
+/* ── Product grid ── */
+.product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-top:16px}
+.product-card{
+  border:1.5px solid var(--border);border-radius:var(--r);
+  padding:16px 14px;background:var(--white);
+  transition:all .2s;cursor:default;
+}
+.product-card:hover{border-color:var(--blue-400);box-shadow:var(--sh2);transform:translateY(-2px)}
+.product-icon{
+  width:44px;height:44px;border-radius:12px;margin-bottom:12px;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,var(--blue-100),var(--blue-200));
+}
+.product-icon svg{width:22px;height:22px;color:var(--blue-700)}
+.product-name{font-weight:700;font-size:.85rem;color:var(--text);margin-bottom:4px;line-height:1.3}
+.product-meta{font-size:.72rem;color:var(--muted);margin-bottom:10px}
+.product-footer{display:flex;align-items:center;justify-content:space-between}
+.product-price{font-family:var(--font-d);font-size:.9rem;font-weight:700;color:var(--blue-700)}
+.product-buy{
+  padding:5px 12px;border-radius:var(--rs);
+  background:var(--blue-600);color:#fff;border:none;
+  font-size:.72rem;font-weight:600;cursor:pointer;
+  transition:all .18s;font-family:var(--font-b);
+  display:flex;align-items:center;gap:4px;
+}
+.product-buy:hover{background:var(--blue-700);box-shadow:0 2px 8px rgba(37,99,235,.3)}
+.product-buy svg{width:11px;height:11px}
+
+/* ── Order card ── */
+.order-card{
+  border:1.5px solid var(--border);border-radius:var(--r);padding:16px 18px;
+  background:var(--white);margin-bottom:12px;transition:border-color .2s;
+}
+.order-card:hover{border-color:var(--blue-200)}
+.oc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;gap:8px}
+.oc-service{display:flex;align-items:center;gap:10px}
+.oc-svc-icon{
+  width:38px;height:38px;border-radius:10px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,var(--blue-100),var(--blue-200));
+}
+.oc-svc-icon svg{width:18px;height:18px;color:var(--blue-700)}
+.oc-svc-name{font-weight:700;font-size:.88rem;color:var(--text);line-height:1.3}
+.oc-svc-meta{font-size:.72rem;color:var(--muted);margin-top:2px}
+.oc-mid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;padding:12px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin-bottom:12px}
+.oc-field label{font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--dim);display:block;margin-bottom:3px}
+.oc-field span{font-size:.82rem;font-weight:600;color:var(--text)}
+.oc-phone{font-family:var(--font-m);color:var(--blue-700)!important}
+.oc-otp-wrap{
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--blue-50);border:1px solid var(--blue-100);
+  border-radius:var(--rs);padding:10px 14px;margin-bottom:12px;
+}
+.oc-otp-left label{font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:block;margin-bottom:3px}
+.oc-otp-code{font-family:var(--font-m);font-size:1.1rem;font-weight:700;color:var(--blue-800);letter-spacing:.1em}
+.oc-otp-waiting{display:flex;align-items:center;gap:6px;font-size:.8rem;color:var(--muted)}
+.oc-otp-waiting .spinner{width:14px;height:14px}
+.oc-actions{display:flex;gap:8px}
+.oc-copy-btn{
+  padding:5px 10px;border-radius:var(--rs);background:var(--blue-600);
+  color:#fff;border:none;font-size:.72rem;font-weight:600;cursor:pointer;
+  display:flex;align-items:center;gap:4px;transition:all .18s;font-family:var(--font-b);
+}
+.oc-copy-btn:hover{background:var(--blue-700)}
+.oc-copy-btn svg{width:11px;height:11px}
+
+/* ── Deposit ── */
+.amount-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.amount-chip{
+  padding:7px 16px;border-radius:999px;border:1.5px solid var(--border2);
+  background:var(--surf);color:var(--text);font-size:.82rem;font-weight:600;
+  cursor:pointer;transition:all .18s;font-family:var(--font-b);
+}
+.amount-chip.sel{background:var(--blue-50);border-color:var(--blue-500);color:var(--blue-700)}
+.method-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-bottom:16px}
+.method-card{
+  border:1.5px solid var(--border2);border-radius:var(--r);padding:12px;
+  background:var(--surf);cursor:pointer;transition:all .18s;text-align:center;
+}
+.method-card:hover{border-color:var(--blue-400);background:var(--blue-50)}
+.method-card.sel{border-color:var(--blue-600);background:var(--blue-50)}
+.method-card svg{width:22px;height:22px;color:var(--blue-600);margin:0 auto 6px;display:block}
+.method-card-name{font-size:.78rem;font-weight:600;color:var(--text)}
+.method-card-desc{font-size:.68rem;color:var(--muted);margin-top:2px}
+
+/* ── Payment result ── */
+.payment-box{
+  background:var(--blue-50);border:1.5px solid var(--blue-200);
+  border-radius:var(--r);padding:18px;margin-top:16px;
+}
+.payment-box-label{font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:4px}
+.payment-box-val{font-family:var(--font-m);font-size:1rem;font-weight:700;color:var(--blue-800);word-break:break-all}
+.payment-box-copy{
+  margin-top:8px;padding:6px 12px;border-radius:var(--rs);
+  background:var(--blue-600);color:#fff;border:none;
+  font-size:.75rem;font-weight:600;cursor:pointer;
+  display:inline-flex;align-items:center;gap:5px;font-family:var(--font-b);
+}
+
+/* ── Profile ── */
+.profile-hero{
+  background:linear-gradient(135deg,var(--blue-700),var(--blue-600),var(--sky));
+  border-radius:var(--r);padding:28px;margin-bottom:20px;
+  display:flex;align-items:center;gap:20px;
+  position:relative;overflow:hidden;
+}
+.profile-hero::before{
+  content:'';position:absolute;right:-40px;top:-40px;
+  width:180px;height:180px;border-radius:50%;
+  background:rgba(255,255,255,.07);
+}
+.profile-avatar-big{
+  width:72px;height:72px;border-radius:50%;
+  background:rgba(255,255,255,.2);border:3px solid rgba(255,255,255,.4);
+  color:#fff;font-family:var(--font-d);font-size:1.6rem;font-weight:800;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;z-index:1;
+}
+.profile-info{position:relative;z-index:1}
+.profile-name{font-family:var(--font-d);font-size:1.3rem;font-weight:800;color:#fff;margin-bottom:2px}
+.profile-email{font-size:.85rem;color:rgba(255,255,255,.75);margin-bottom:8px}
+.profile-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;margin-bottom:20px}
+.profile-stat{
+  background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);
+  padding:16px 18px;transition:all .2s;
+}
+.profile-stat:hover{border-color:var(--blue-300);box-shadow:var(--sh)}
+.ps-label{font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:6px;display:flex;align-items:center;gap:4px}
+.ps-label svg{width:12px;height:12px}
+.ps-val{font-family:var(--font-d);font-size:1.2rem;font-weight:800;color:var(--text)}
+
+/* ── Tabs ── */
+.tab-bar{display:flex;border-bottom:2px solid var(--border);margin-bottom:20px;gap:2px}
+.tab-item{
+  padding:10px 18px;border:none;background:none;font-size:.875rem;
+  font-weight:600;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;
+  margin-bottom:-2px;transition:all .18s;font-family:var(--font-b);
+  display:flex;align-items:center;gap:7px;
+}
+.tab-item svg{width:15px;height:15px}
+.tab-item.active{color:var(--blue-600);border-bottom-color:var(--blue-600)}
+.tab-item:hover:not(.active){color:var(--text)}
+
+/* ── Mobile nav (bottom) ── */
+.mobile-nav{
+  display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;
+  background:var(--white);border-top:1px solid var(--border);
+  padding:6px 4px calc(6px + env(safe-area-inset-bottom));
+  display:none;grid-template-columns:repeat(5,1fr);
+  box-shadow:0 -4px 24px rgba(37,99,235,.08);
+}
+.mnav-item{
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  padding:6px 2px;border-radius:var(--rs);cursor:pointer;
+  color:var(--dim);font-size:.6rem;font-weight:600;transition:all .18s;border:none;background:none;
+  font-family:var(--font-b);
+}
+.mnav-item svg{width:22px;height:22px}
+.mnav-item.active{color:var(--blue-600)}
+
+/* ── Responsive ── */
+@media(max-width:768px){
+  .sidebar{position:fixed;left:0;top:0;bottom:0;z-index:300;transform:translateX(-100%)}
+  .sidebar.open{transform:none;box-shadow:4px 0 24px rgba(15,23,42,.15)}
+  .topbar-menu{display:flex}
+  .content{padding:20px 16px 80px}
+  .mobile-nav{display:grid}
+  .form-row{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .product-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
+}
+.sidebar-overlay{
+  display:none;position:fixed;inset:0;z-index:299;background:rgba(15,23,42,.3);
+}
+.sidebar-overlay.show{display:block}
+/* ── ORDER PAGE REDESIGN ── */
+.order-step-header{
+  display:flex;align-items:center;gap:12px;margin-bottom:18px;
+}
+.order-step-num{
+  width:28px;height:28px;border-radius:50%;
+  background:linear-gradient(135deg,var(--blue-600),var(--sky));
+  color:#fff;font-size:.75rem;font-weight:800;font-family:var(--font-d);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.order-step-title{font-family:var(--font-d);font-weight:700;font-size:.95rem;color:var(--text)}
+.order-step-sub{font-size:.75rem;color:var(--muted);margin-top:1px}
+
+.server-toggle-new{
+  display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px;
+}
+.server-card{
+  border:2px solid var(--border);border-radius:16px;padding:18px 16px;
+  background:var(--surf);cursor:pointer;transition:all .22s;position:relative;overflow:hidden;
+}
+.server-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--blue-600),var(--sky));
+  transform:scaleX(0);transform-origin:left;transition:transform .22s;
+}
+.server-card:hover{border-color:var(--blue-300);background:var(--blue-50);transform:translateY(-2px);box-shadow:var(--sh2)}
+.server-card.active{border-color:var(--blue-500);background:var(--blue-50);box-shadow:0 4px 20px rgba(37,99,235,.15)}
+.server-card.active::before{transform:scaleX(1)}
+.sc-icon{
+  width:44px;height:44px;border-radius:12px;margin-bottom:12px;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,var(--blue-100),var(--blue-200));transition:all .22s;
+}
+.server-card.active .sc-icon{background:linear-gradient(135deg,var(--blue-600),var(--sky));box-shadow:0 4px 12px rgba(37,99,235,.3)}
+.sc-icon svg{width:20px;height:20px;color:var(--blue-700);transition:color .22s}
+.server-card.active .sc-icon svg{color:#fff}
+.sc-name{font-family:var(--font-d);font-weight:700;font-size:.9rem;color:var(--text);margin-bottom:3px}
+.sc-desc{font-size:.75rem;color:var(--muted);line-height:1.4}
+.sc-badge{
+  position:absolute;top:12px;right:12px;
+  background:var(--success);color:#fff;font-size:.65rem;font-weight:700;
+  padding:2px 8px;border-radius:999px;opacity:0;transition:opacity .22s;
+}
+.server-card.active .sc-badge{opacity:1}
+
+.filter-cascade{display:flex;flex-direction:column;gap:0}
+.filter-step{
+  display:flex;align-items:stretch;gap:0;
+  position:relative;padding-left:36px;padding-bottom:16px;
+}
+.filter-step:last-child{padding-bottom:0}
+.filter-step-line{
+  position:absolute;left:11px;top:24px;bottom:0;width:2px;
+  background:linear-gradient(180deg,var(--blue-200),var(--border));
+}
+.filter-step:last-child .filter-step-line{display:none}
+.filter-step-dot{
+  position:absolute;left:4px;top:6px;
+  width:16px;height:16px;border-radius:50%;
+  background:var(--white);border:2px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;transition:all .2s;
+}
+.filter-step-dot.done{border-color:var(--blue-600);background:var(--blue-600)}
+.filter-step-dot.done svg{display:block}
+.filter-step-dot svg{width:8px;height:8px;color:#fff;display:none}
+.filter-step-content{flex:1;min-width:0}
+.filter-label{font-size:.75rem;font-weight:700;color:var(--text);margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em;display:flex;align-items:center;gap:6px}
+.filter-label-tag{background:var(--blue-50);color:var(--blue-600);font-size:.62rem;font-weight:700;padding:1px 7px;border-radius:999px;border:1px solid var(--blue-100)}
+.form-select-styled{
+  width:100%;padding:10px 14px;
+  border:1.5px solid var(--border2);border-radius:10px;
+  background:var(--white);color:var(--text);font-size:.875rem;
+  font-family:var(--font-b);outline:none;cursor:pointer;
+  transition:border-color .2s,box-shadow .2s;
+  appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center;
+  padding-right:36px;
+}
+.form-select-styled:focus{border-color:var(--blue-500);box-shadow:0 0 0 3px rgba(37,99,235,.1);background-color:#fff}
+.form-select-styled:disabled{opacity:.5;cursor:not-allowed;background-color:var(--surf)}
+
+.products-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:16px;margin-top:8px;
+}
+.products-header-left{display:flex;align-items:center;gap:10px}
+.products-count{
+  background:var(--blue-50);border:1px solid var(--blue-100);
+  color:var(--blue-700);font-size:.75rem;font-weight:700;
+  padding:3px 10px;border-radius:999px;
+}
+.products-search{
+  padding:8px 12px 8px 34px;border:1.5px solid var(--border2);border-radius:var(--rs);
+  background:var(--surf);color:var(--text);font-size:.82rem;font-family:var(--font-b);
+  outline:none;transition:border-color .2s,box-shadow .2s;width:200px;
+}
+.products-search:focus{border-color:var(--blue-500);box-shadow:0 0 0 3px rgba(37,99,235,.1);background:#fff;width:240px}
+.search-wrap{position:relative;display:flex;align-items:center}
+.search-wrap svg{position:absolute;left:9px;width:14px;height:14px;color:var(--dim);pointer-events:none}
+
+.product-card-new{
+  border:1.5px solid var(--border);border-radius:14px;
+  padding:16px 14px;background:var(--white);
+  transition:all .2s;cursor:default;position:relative;overflow:hidden;
+}
+.product-card-new:hover{border-color:var(--blue-400);box-shadow:0 8px 28px rgba(37,99,235,.13);transform:translateY(-3px)}
+.product-card-new::after{
+  content:'';position:absolute;inset:0;border-radius:14px;
+  background:linear-gradient(135deg,rgba(37,99,235,.03),transparent);
+  pointer-events:none;
+}
+.pcn-icon{
+  width:48px;height:48px;border-radius:14px;margin-bottom:12px;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 12px rgba(0,0,0,.15);
+}
+.pcn-icon svg{width:24px;height:24px;color:#fff}
+.pcn-name{font-weight:700;font-size:.88rem;color:var(--text);margin-bottom:3px;line-height:1.3}
+.pcn-meta{font-size:.72rem;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.pcn-meta-tag{background:var(--blue-50);color:var(--blue-600);padding:1px 7px;border-radius:5px;font-weight:600}
+.pcn-footer{display:flex;align-items:center;justify-content:space-between;margin-top:auto}
+.pcn-price{font-family:var(--font-d);font-size:.95rem;font-weight:800;color:var(--blue-700)}
+.pcn-price-sub{font-size:.65rem;color:var(--muted);font-weight:500;margin-top:1px}
+.pcn-buy{
+  padding:6px 14px;border-radius:9px;
+  background:linear-gradient(135deg,var(--blue-600),var(--blue-700));
+  color:#fff;border:none;
+  font-size:.75rem;font-weight:700;cursor:pointer;
+  transition:all .18s;font-family:var(--font-b);
+  display:flex;align-items:center;gap:4px;
+  box-shadow:0 2px 8px rgba(37,99,235,.3);
+}
+.pcn-buy:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(37,99,235,.4)}
+.pcn-buy svg{width:11px;height:11px}
+
+.order-empty{
+  text-align:center;padding:60px 20px;
+  background:linear-gradient(135deg,var(--blue-50),var(--surf));
+  border-radius:16px;border:2px dashed var(--blue-200);
+}
+.order-empty-icon{
+  width:64px;height:64px;border-radius:50%;
+  background:linear-gradient(135deg,var(--blue-100),var(--blue-200));
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 16px;
+}
+.order-empty-icon svg{width:28px;height:28px;color:var(--blue-600)}
+.order-empty h3{font-family:var(--font-d);font-size:1rem;font-weight:700;color:var(--text);margin-bottom:6px}
+.order-empty p{font-size:.85rem;color:var(--muted);line-height:1.6}
+
+.loading-products{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:48px 20px;gap:12px;
+}
+.loading-products .spinner{width:28px;height:28px;border-width:3px}
+.loading-products span{font-size:.85rem;color:var(--muted);font-weight:500}
+/* ── CUSTOM DROPDOWN (mengganti select native) ── */
+.cd-wrap{position:relative;width:100%}
+.cd-trigger{
+  width:100%;padding:11px 36px 11px 14px;
+  border:1.5px solid var(--border2);border-radius:10px;
+  background:var(--white);color:var(--text);font-size:.875rem;
+  font-family:var(--font-b);cursor:pointer;text-align:left;
+  transition:border-color .2s,box-shadow .2s;
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  position:relative;user-select:none;
+}
+.cd-trigger:disabled{opacity:.45;cursor:not-allowed;background:var(--surf)}
+.cd-trigger .cd-val{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text)}
+.cd-trigger .cd-placeholder{color:var(--dim)}
+.cd-trigger .cd-arrow{
+  flex-shrink:0;width:16px;height:16px;color:var(--dim);
+  transition:transform .2s;pointer-events:none;
+}
+.cd-trigger.open{border-color:var(--blue-500);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.cd-trigger.open .cd-arrow{transform:rotate(180deg)}
+.cd-trigger.filled{border-color:var(--blue-400);background:var(--blue-50)}
+.cd-trigger.filled .cd-val{color:var(--blue-800);font-weight:600}
+
+.cd-dropdown{
+  position:fixed;z-index:9999;
+  background:var(--white);border:1.5px solid var(--border2);border-radius:12px;
+  box-shadow:0 8px 40px rgba(15,23,42,.2);
+  overflow:hidden;display:none;
+  animation:cdFadeIn .15s ease;
+  width:auto;
+}
+.cd-dropdown.open{display:block}
+@keyframes cdFadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+
+.cd-search-wrap{
+  padding:10px 12px;border-bottom:1px solid var(--border);
+  position:relative;
+}
+.cd-search{
+  width:100%;padding:8px 10px 8px 32px;
+  border:1.5px solid var(--border2);border-radius:8px;
+  background:var(--surf);color:var(--text);font-size:.82rem;
+  font-family:var(--font-b);outline:none;
+  transition:border-color .2s;
+}
+.cd-search:focus{border-color:var(--blue-500);background:#fff}
+.cd-search-icon{
+  position:absolute;left:20px;top:50%;transform:translateY(-50%);
+  color:var(--dim);pointer-events:none;display:flex;
+}
+.cd-search-icon svg{width:13px;height:13px}
+
+.cd-list{
+  max-height:220px;overflow-y:auto;
+  scrollbar-width:thin;scrollbar-color:var(--blue-200) transparent;
+}
+.cd-list::-webkit-scrollbar{width:4px}
+.cd-list::-webkit-scrollbar-thumb{background:var(--blue-200);border-radius:4px}
+
+.cd-item{
+  padding:10px 14px;cursor:pointer;
+  font-size:.85rem;color:var(--text);
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  transition:background .12s;border-bottom:1px solid var(--border);
+}
+.cd-item:last-child{border-bottom:none}
+.cd-item:hover{background:var(--blue-50)}
+.cd-item.selected{background:var(--blue-50);color:var(--blue-700);font-weight:600}
+.cd-item.selected::after{
+  content:'';width:8px;height:8px;border-radius:50%;
+  background:var(--blue-600);flex-shrink:0;
+}
+.cd-item-right{font-family:var(--font-m);font-size:.75rem;color:var(--blue-600);font-weight:700;white-space:nowrap}
+.cd-empty{padding:20px;text-align:center;font-size:.82rem;color:var(--muted)}
+
+.cd-loading{
+  padding:14px;text-align:center;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  font-size:.82rem;color:var(--muted);
+}
+.cd-loading .spinner{width:14px;height:14px;border-width:2px}
+
+/* ── ORDER PAGE STYLES ── */
+.order-step-header{
+  display:flex;align-items:center;gap:12px;margin-bottom:18px;
+}
+.order-step-num{
+  width:28px;height:28px;border-radius:50%;
+  background:linear-gradient(135deg,var(--blue-600),var(--sky));
+  color:#fff;font-size:.75rem;font-weight:800;font-family:var(--font-d);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.order-step-title{font-family:var(--font-d);font-weight:700;font-size:.95rem;color:var(--text)}
+.order-step-sub{font-size:.75rem;color:var(--muted);margin-top:1px}
+
+.server-toggle-new{
+  display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px;
+}
+.server-card{
+  border:2px solid var(--border);border-radius:16px;padding:18px 16px;
+  background:var(--surf);cursor:pointer;transition:all .22s;position:relative;overflow:hidden;
+}
+.server-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--blue-600),var(--sky));
+  transform:scaleX(0);transform-origin:left;transition:transform .22s;
+}
+.server-card:hover{border-color:var(--blue-300);background:var(--blue-50);transform:translateY(-2px);box-shadow:var(--sh2)}
+.server-card.active{border-color:var(--blue-500);background:var(--blue-50);box-shadow:0 4px 20px rgba(37,99,235,.15)}
+.server-card.active::before{transform:scaleX(1)}
+.sc-icon{
+  width:44px;height:44px;border-radius:12px;margin-bottom:12px;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,var(--blue-100),var(--blue-200));transition:all .22s;
+}
+.server-card.active .sc-icon{background:linear-gradient(135deg,var(--blue-600),var(--sky));box-shadow:0 4px 12px rgba(37,99,235,.3)}
+.sc-icon svg{width:20px;height:20px;color:var(--blue-700);transition:color .22s}
+.server-card.active .sc-icon svg{color:#fff}
+.sc-name{font-family:var(--font-d);font-weight:700;font-size:.9rem;color:var(--text);margin-bottom:3px}
+.sc-desc{font-size:.75rem;color:var(--muted);line-height:1.4}
+.sc-badge{
+  position:absolute;top:12px;right:12px;
+  background:var(--success);color:#fff;font-size:.65rem;font-weight:700;
+  padding:2px 8px;border-radius:999px;opacity:0;transition:opacity .22s;
+}
+.server-card.active .sc-badge{opacity:1}
+
+.filter-cascade{display:flex;flex-direction:column;gap:0}
+.filter-step{
+  position:relative;padding-left:36px;padding-bottom:18px;
+}
+.filter-step:last-child{padding-bottom:0}
+.filter-step-line{
+  position:absolute;left:11px;top:20px;bottom:0;width:2px;
+  background:linear-gradient(180deg,var(--blue-200),var(--border));
+}
+.filter-step:last-child .filter-step-line{display:none}
+.filter-step-dot{
+  position:absolute;left:4px;top:4px;
+  width:16px;height:16px;border-radius:50%;
+  background:var(--white);border:2px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;transition:all .2s;
+  z-index:1;
+}
+.filter-step-dot.done{border-color:var(--blue-600);background:var(--blue-600)}
+.filter-step-dot.done svg{display:block}
+.filter-step-dot svg{width:8px;height:8px;color:#fff;display:none}
+.filter-step-content{flex:1;min-width:0}
+.filter-label{
+  font-size:.75rem;font-weight:700;color:var(--text);
+  margin-bottom:7px;text-transform:uppercase;letter-spacing:.04em;
+  display:flex;align-items:center;gap:6px;
+}
+.filter-label-tag{
+  background:var(--blue-50);color:var(--blue-600);
+  font-size:.62rem;font-weight:700;padding:1px 7px;
+  border-radius:999px;border:1px solid var(--blue-100);
+  text-transform:none;letter-spacing:0;
+}
+
+.products-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:16px;flex-wrap:wrap;gap:10px;
+}
+.products-header-left{display:flex;align-items:center;gap:10px}
+.products-count{
+  background:var(--blue-50);border:1px solid var(--blue-100);
+  color:var(--blue-700);font-size:.75rem;font-weight:700;
+  padding:3px 10px;border-radius:999px;
+}
+.products-search-wrap{position:relative;display:flex;align-items:center}
+.products-search-wrap svg{position:absolute;left:9px;width:14px;height:14px;color:var(--dim);pointer-events:none}
+.products-search{
+  padding:8px 12px 8px 30px;border:1.5px solid var(--border2);border-radius:var(--rs);
+  background:var(--surf);color:var(--text);font-size:.82rem;font-family:var(--font-b);
+  outline:none;transition:all .2s;width:180px;
+}
+.products-search:focus{border-color:var(--blue-500);box-shadow:0 0 0 3px rgba(37,99,235,.1);background:#fff;width:220px}
+
+.product-card-new{
+  border:1.5px solid var(--border);border-radius:14px;
+  padding:16px 14px;background:var(--white);
+  transition:all .2s;cursor:default;
+}
+.product-card-new:hover{border-color:var(--blue-400);box-shadow:0 8px 28px rgba(37,99,235,.13);transform:translateY(-3px)}
+.pcn-icon{
+  width:48px;height:48px;border-radius:14px;margin-bottom:12px;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 12px rgba(0,0,0,.15);
+}
+.pcn-icon svg{width:24px;height:24px;color:#fff}
+.pcn-name{font-weight:700;font-size:.88rem;color:var(--text);margin-bottom:4px;line-height:1.3}
+.pcn-meta{font-size:.72rem;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.pcn-meta-tag{background:var(--blue-50);color:var(--blue-600);padding:2px 8px;border-radius:5px;font-weight:600;border:1px solid var(--blue-100)}
+.pcn-footer{display:flex;align-items:center;justify-content:space-between}
+.pcn-price{font-family:var(--font-d);font-size:.95rem;font-weight:800;color:var(--blue-700)}
+.pcn-price-sub{font-size:.65rem;color:var(--muted);font-weight:500;margin-top:1px}
+.pcn-buy{
+  padding:6px 14px;border-radius:9px;
+  background:linear-gradient(135deg,var(--blue-600),var(--blue-700));
+  color:#fff;border:none;font-size:.75rem;font-weight:700;cursor:pointer;
+  transition:all .18s;font-family:var(--font-b);
+  display:flex;align-items:center;gap:4px;
+  box-shadow:0 2px 8px rgba(37,99,235,.3);
+}
+.pcn-buy:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(37,99,235,.4)}
+.pcn-buy svg{width:11px;height:11px}
+
+.order-empty{
+  text-align:center;padding:48px 20px;
+  background:linear-gradient(135deg,var(--blue-50),var(--surf));
+  border-radius:16px;border:2px dashed var(--blue-200);
+}
+.order-empty-icon{
+  width:64px;height:64px;border-radius:50%;
+  background:linear-gradient(135deg,var(--blue-100),var(--blue-200));
+  display:flex;align-items:center;justify-content:center;margin:0 auto 16px;
+}
+.order-empty-icon svg{width:28px;height:28px;color:var(--blue-600)}
+.order-empty h3{font-family:var(--font-d);font-size:1rem;font-weight:700;color:var(--text);margin-bottom:6px}
+.order-empty p{font-size:.85rem;color:var(--muted);line-height:1.6}
+
+.loading-products{
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:48px 20px;gap:12px;
+}
+.loading-products .spinner{width:28px;height:28px;border-width:3px}
+.loading-products span{font-size:.85rem;color:var(--muted);font-weight:500}
+</style>
+</head>
+<body>
+
+<!-- ── Toast Container ── -->
+<div class="toast-wrap" id="toasts"></div>
+
+<!-- ── App ── -->
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo-icon" id="sidebar-logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <span class="sidebar-brand">NokosOTP</span>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Menu</div>
+      <div class="nav-item active" onclick="goPage('dashboard')" id="nav-dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </div>
+      <div class="nav-item" onclick="goPage('order')" id="nav-order">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="14" y2="14"/></svg>
+        Order OTP
+      </div>
+      <div class="nav-item" onclick="goPage('history')" id="nav-history">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Riwayat
+      </div>
+      <div class="nav-item" onclick="goPage('deposit')" id="nav-deposit">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+        Deposit
+      </div>
+      <div class="nav-section-label">Akun</div>
+      <div class="nav-item" onclick="goPage('profile')" id="nav-profile">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Profil
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-pill">
+        <div class="user-avatar" id="sb-avatar">?</div>
+        <div class="user-info">
+          <div class="user-name" id="sb-name">Loading...</div>
+          <div class="user-bal" id="sb-bal">Rp 0</div>
+        </div>
+        <button class="btn-logout" onclick="doLogout()" title="Keluar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </button>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <!-- Topbar -->
+    <div class="topbar">
+      <button class="topbar-menu" onclick="toggleSidebar()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <div class="topbar-title" id="page-title">Dashboard</div>
+      <div class="topbar-bal" onclick="refreshBalance()" title="Refresh saldo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+        <span id="tb-bal">Rp 0</span>
+      </div>
+      <div class="topbar-avatar" id="tb-avatar" onclick="goPage('profile')">?</div>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+
+      <!-- ── DASHBOARD ── -->
+      <div class="page active" id="page-dashboard">
+        <div class="page-header">
+          <h1>Dashboard</h1>
+          <p id="dash-greeting">Selamat datang kembali!</p>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card sc-blue">
+            <div class="stat-card-bg stat-blue"></div>
+            <div class="stat-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></div>
+            <div class="stat-label">Saldo Aktif</div>
+            <div class="stat-value" id="s-balance">—</div>
+          </div>
+          <div class="stat-card sc-green">
+            <div class="stat-card-bg stat-green"></div>
+            <div class="stat-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></div>
+            <div class="stat-label">Total Deposit</div>
+            <div class="stat-value" id="s-deposit">—</div>
+          </div>
+          <div class="stat-card sc-warn">
+            <div class="stat-card-bg stat-warn"></div>
+            <div class="stat-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div>
+            <div class="stat-label">Total Order</div>
+            <div class="stat-value" id="s-order">—</div>
+          </div>
+          <div class="stat-card sc-purple">
+            <div class="stat-card-bg stat-purple"></div>
+            <div class="stat-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+            <div class="stat-label">Total Refund</div>
+            <div class="stat-value" id="s-refund">—</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px" id="dash-tables">
+          <div class="section-card">
+            <div class="sc-head">
+              <div class="sc-head-left"><div class="sc-head-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div><h3>Order Terbaru</h3></div>
+            </div>
+            <div class="sc-body" id="dash-orders"><div class="loading"><div class="spinner"></div> Memuat...</div></div>
+          </div>
+          <div class="section-card">
+            <div class="sc-head">
+              <div class="sc-head-left"><div class="sc-head-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></div><h3>Deposit Terbaru</h3></div>
+            </div>
+            <div class="sc-body" id="dash-deps"><div class="loading"><div class="spinner"></div> Memuat...</div></div>
+          </div>
+        </div>
+      </div>
+
+<!-- ── ORDER OTP ── -->
+<div class="page" id="page-order">
+  <div class="page-header"><h1>Order OTP</h1><p>Pilih server, layanan, dan beli nomor OTP instan</p></div>
+
+  <div class="section-card" style="margin-bottom:16px">
+    <div class="sc-body" style="padding:20px">
+      <div class="order-step-header">
+        <div class="order-step-num">1</div>
+        <div>
+          <div class="order-step-title">Pilih Server Provider</div>
+          <div class="order-step-sub">Setiap server memiliki cakupan layanan berbeda</div>
+        </div>
+      </div>
+      <div class="server-toggle-new">
+        <div class="server-card active" id="scard-1" onclick="selectServer(1)">
+          <span class="sc-badge">Aktif</span>
+          <div class="sc-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+          </div>
+          <div class="sc-name">Server 1</div>
+          <div class="sc-desc">Provider lokal — harga terjangkau, cocok untuk layanan Indonesia & Asia</div>
+        </div>
+        <div class="server-card" id="scard-2" onclick="selectServer(2)">
+          <span class="sc-badge">Aktif</span>
+          <div class="sc-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          </div>
+          <div class="sc-name">Server 2</div>
+          <div class="sc-desc">Provider internasional — jangkauan global, 100+ negara tersedia</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-card">
+    <div class="sc-body" style="padding:20px">
+      <div class="order-step-header">
+        <div class="order-step-num">2</div>
+        <div>
+          <div class="order-step-title">Pilih Layanan</div>
+          <div class="order-step-sub">Isi filter berikut untuk menemukan produk</div>
+        </div>
+      </div>
+
+      <!-- SERVER 1 FILTERS -->
+      <div id="s1-filters">
+        <div class="filter-cascade">
+          <div class="filter-step">
+            <div class="filter-step-line"></div>
+            <div class="filter-step-dot" id="dot-s1-svc">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="filter-step-content">
+              <div class="filter-label">Layanan <span class="filter-label-tag">Wajib</span></div>
+              <div class="cd-wrap" id="cdw-s1-service">
+                <button type="button" class="cd-trigger" id="cdt-s1-service" disabled onclick="cdToggle('s1-service')">
+                  <span class="cd-val cd-placeholder">Memuat layanan...</span>
+                  <svg class="cd-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="cd-dropdown" id="cdd-s1-service">
+                  <div class="cd-search-wrap">
+                    <span class="cd-search-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+                    <input class="cd-search" type="text" placeholder="Cari layanan..." oninput="cdFilter('s1-service',this.value)"/>
+                  </div>
+                  <div class="cd-list" id="cdl-s1-service"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="filter-step">
+            <div class="filter-step-line"></div>
+            <div class="filter-step-dot" id="dot-s1-ctr">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="filter-step-content">
+              <div class="filter-label">Negara <span class="filter-label-tag">Wajib</span></div>
+              <div class="cd-wrap" id="cdw-s1-country">
+                <button type="button" class="cd-trigger" id="cdt-s1-country" disabled onclick="cdToggle('s1-country')">
+                  <span class="cd-val cd-placeholder">Pilih layanan dulu</span>
+                  <svg class="cd-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="cd-dropdown" id="cdd-s1-country">
+                  <div class="cd-search-wrap">
+                    <span class="cd-search-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+                    <input class="cd-search" type="text" placeholder="Cari negara..." oninput="cdFilter('s1-country',this.value)"/>
+                  </div>
+                  <div class="cd-list" id="cdl-s1-country"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="filter-step">
+            <div class="filter-step-dot" id="dot-s1-op">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="filter-step-content">
+              <div class="filter-label">Operator & Harga <span class="filter-label-tag">Wajib</span></div>
+              <div class="cd-wrap" id="cdw-s1-operator">
+                <button type="button" class="cd-trigger" id="cdt-s1-operator" disabled onclick="cdToggle('s1-operator')">
+                  <span class="cd-val cd-placeholder">Pilih negara dulu</span>
+                  <svg class="cd-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="cd-dropdown" id="cdd-s1-operator">
+                  <div class="cd-search-wrap">
+                    <span class="cd-search-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+                    <input class="cd-search" type="text" placeholder="Cari operator..." oninput="cdFilter('s1-operator',this.value)"/>
+                  </div>
+                  <div class="cd-list" id="cdl-s1-operator"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SERVER 2 FILTERS -->
+      <div id="s2-filters" style="display:none">
+        <div class="filter-cascade">
+          <div class="filter-step">
+            <div class="filter-step-line"></div>
+            <div class="filter-step-dot" id="dot-s2-ctr">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="filter-step-content">
+              <div class="filter-label">Negara <span class="filter-label-tag">Wajib</span></div>
+              <div class="cd-wrap" id="cdw-s2-country">
+                <button type="button" class="cd-trigger" id="cdt-s2-country" disabled onclick="cdToggle('s2-country')">
+                  <span class="cd-val cd-placeholder">Memuat negara...</span>
+                  <svg class="cd-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="cd-dropdown" id="cdd-s2-country">
+                  <div class="cd-search-wrap">
+                    <span class="cd-search-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+                    <input class="cd-search" type="text" placeholder="Cari negara..." oninput="cdFilter('s2-country',this.value)"/>
+                  </div>
+                  <div class="cd-list" id="cdl-s2-country"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="filter-step">
+            <div class="filter-step-dot" id="dot-s2-svc">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="filter-step-content">
+              <div class="filter-label">Layanan / Platform <span class="filter-label-tag">Wajib</span></div>
+              <div class="cd-wrap" id="cdw-s2-service">
+                <button type="button" class="cd-trigger" id="cdt-s2-service" disabled onclick="cdToggle('s2-service')">
+                  <span class="cd-val cd-placeholder">Pilih negara dulu</span>
+                  <svg class="cd-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="cd-dropdown" id="cdd-s2-service">
+                  <div class="cd-search-wrap">
+                    <span class="cd-search-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+                    <input class="cd-search" type="text" placeholder="Cari layanan..." oninput="cdFilter('s2-service',this.value)"/>
+                  </div>
+                  <div class="cd-list" id="cdl-s2-service"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="products-area" style="margin-top:20px"></div>
+    </div>
+  </div>
+</div>
+
+      <!-- ── HISTORY ── -->
+      <div class="page" id="page-history">
+        <div class="page-header"><h1>Riwayat</h1><p>Semua riwayat transaksi kamu</p></div>
+        <div class="tab-bar">
+          <button class="tab-item active" id="htab-orders" onclick="switchHistoryTab('orders')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/></svg>
+            Order OTP
+          </button>
+          <button class="tab-item" id="htab-deposits" onclick="switchHistoryTab('deposits')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+            Deposit
+          </button>
+        </div>
+        <div id="history-content"><div class="loading"><div class="spinner"></div> Memuat...</div></div>
+      </div>
+
+      <!-- ── DEPOSIT ── -->
+      <div class="page" id="page-deposit">
+        <div class="page-header"><h1>Deposit Saldo</h1><p>Isi saldo untuk membeli OTP</p></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px" id="deposit-layout">
+          <div class="section-card">
+            <div class="sc-head"><div class="sc-head-left"><div class="sc-head-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><h3>Jumlah Deposit</h3></div></div>
+            <div class="sc-body">
+              <div class="form-group"><label class="form-label">Pilih Nominal</label>
+                <div class="amount-chips" id="amount-chips"></div>
+              </div>
+              <div class="form-group"><label class="form-label">Nominal Lain</label>
+                <div class="input-wrap"><div class="input-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+                <input type="number" class="form-input" id="dep-custom" placeholder="mis. 25000" oninput="onCustomAmount(this.value)" min="5000"/></div>
+              </div>
+              <div class="form-group"><label class="form-label">Metode Pembayaran</label>
+                <div class="method-grid" id="method-grid"></div>
+              </div>
+              <button class="btn btn-blue btn-block btn-lg" onclick="doDeposit()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg>
+                Bayar Sekarang
+              </button>
+            </div>
+          </div>
+          <div class="section-card">
+            <div class="sc-head"><div class="sc-head-left"><div class="sc-head-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><h3>Status Pembayaran</h3></div></div>
+            <div class="sc-body" id="deposit-status-box">
+              <div class="empty-state"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></div><p>Buat deposit terlebih dahulu</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── PROFILE ── -->
+      <div class="page" id="page-profile">
+        <div class="page-header"><h1>Profil</h1><p>Informasi akun dan statistik kamu</p></div>
+        <div id="profile-content"><div class="loading"><div class="spinner"></div> Memuat...</div></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Mobile Bottom Nav -->
+  <div class="mobile-nav" id="mobile-nav">
+    <button class="mnav-item active" id="mnav-dashboard" onclick="goPage('dashboard')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Beranda
+    </button>
+    <button class="mnav-item" id="mnav-order" onclick="goPage('order')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/></svg>
+      Order
+    </button>
+    <button class="mnav-item" id="mnav-history" onclick="goPage('history')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Riwayat
+    </button>
+    <button class="mnav-item" id="mnav-deposit" onclick="goPage('deposit')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+      Deposit
+    </button>
+    <button class="mnav-item" id="mnav-profile" onclick="goPage('profile')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Profil
+    </button>
+  </div>
+</div>
+
+<!-- ── ORDER MODAL ── -->
+<div class="modal-overlay" id="modal-order">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Konfirmasi Order</h3>
+      <button class="modal-close" onclick="closeModal('modal-order')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div style="display:grid;gap:10px" id="modal-order-details"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline-blue" onclick="closeModal('modal-order')">Batal</button>
+      <button class="btn btn-blue" id="btn-confirm-order" onclick="confirmOrder()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="20 6 9 17 4 12"/></svg>
+        Konfirmasi & Beli
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// SVG ICON LIBRARY
+// ============================================================
+const I = {
+  phone:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>`,
+  msg:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`,
+  send:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>`,
+  globe:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`,
+  mail:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>`,
+  camera:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>`,
+  video:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>`,
+  search:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>`,
+  users:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+  shop:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>`,
+  game:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="15" y1="13" x2="15.01" y2="13"/><line x1="18" y1="11" x2="18.01" y2="11"/><rect x="2" y="6" width="20" height="12" rx="2"/></svg>`,
+  car:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>`,
+  tag:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>`,
+  copy:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`,
+  check:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`,
+  plus:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`,
+  alert:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`,
+  info:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`,
+  close:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`,
+  qris:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h7v7"/><line x1="14" y1="17" x2="14" y2="17.01"/><line x1="17" y1="14" x2="17" y2="14.01"/></svg>`,
+  bank:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>`,
+  link:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`,
+  cancel:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`,
+  finish:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`,
+};
+
+function svgIcon(key,size=18){
+  const s=I[key]||I.phone;
+  return s.replace('xmlns="http://www.w3.org/2000/svg"','').replace(/viewBox="[^"]*"/,`width="${size}" height="${size}" viewBox="0 0 24 24"`);
+}
+
+// ============================================================
+// HELPERS
+// ============================================================
+const $ = id => document.getElementById(id);
+let USER = null;
+
+const formatRp = n => 'Rp ' + Number(n||0).toLocaleString('id-ID');
+const formatDate = d => d ? new Date(d).toLocaleString('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '—';
+
+async function api(method, url, data) {
+  const opts = { method, credentials:'include', headers:{'Content-Type':'application/json'} };
+  if(data) opts.body = JSON.stringify(data);
+  const r = await fetch(url, opts);
+  const j = await r.json();
+  if(r.status === 401) { window.location.replace('/login'); throw new Error('Unauthorized'); }
+  return j;
+}
+
+function toast(msg, type='info', dur=3500) {
+  const icons={success:'check',error:'alert',info:'info',warn:'alert'};
+  const types={success:'toast-s',error:'toast-e',info:'toast-i',warn:'toast-w'};
+  const el = document.createElement('div');
+  el.className = `toast ${types[type]||'toast-i'}`;
+  el.innerHTML = `<div class="toast-icon">${svgIcon(icons[type]||'info',14)}</div><span class="toast-msg">${msg}</span><button class="toast-close" onclick="this.closest('.toast').remove()">${svgIcon('close',14)}</button>`;
+  $('toasts').appendChild(el);
+  setTimeout(()=>{el.classList.add('out');setTimeout(()=>el.remove(),200)},dur);
+}
+
+function setHTML(id, html) { const el=$(id); if(el) el.innerHTML=html; }
+
+function statusBadge(status) {
+  const m={
+    'ACTIVE':'badge-active','active':'badge-active',
+    'OTP_RECEIVED':'badge-success','COMPLETED':'badge-success','completed':'badge-success',
+    'EXPIRED':'badge-warn','expired':'badge-warn',
+    'CANCELED':'badge-danger','canceled':'badge-danger',
+    'FAILED':'badge-danger',
+    'pending':'badge-warn','completed_d':'badge-success',
+  };
+  const labels={'ACTIVE':'Aktif','OTP_RECEIVED':'OTP Diterima','COMPLETED':'Selesai','EXPIRED':'Kadaluarsa','CANCELED':'Dibatalkan','FAILED':'Gagal','pending':'Menunggu','completed':'Selesai','canceled':'Dibatalkan'};
+  const cls=m[status]||'badge-muted';
+  return `<span class="badge ${cls}">${labels[status]||status}</span>`;
+}
+
+function serviceIcon(name) {
+  const n=(name||'').toLowerCase();
+  if(n.includes('whatsapp')) return svgIcon('msg',22);
+  if(n.includes('telegram')) return svgIcon('send',22);
+  if(n.includes('google')) return svgIcon('search',22);
+  if(n.includes('gmail')||n.includes('email')) return svgIcon('mail',22);
+  if(n.includes('facebook')||n.includes('meta')) return svgIcon('users',22);
+  if(n.includes('instagram')) return svgIcon('camera',22);
+  if(n.includes('tiktok')) return svgIcon('video',22);
+  if(n.includes('shopee')||n.includes('tokopedia')||n.includes('lazada')||n.includes('amazon')) return svgIcon('shop',22);
+  if(n.includes('steam')||n.includes('game')||n.includes('pubg')||n.includes('mobile')) return svgIcon('game',22);
+  if(n.includes('grab')||n.includes('gojek')||n.includes('uber')) return svgIcon('car',22);
+  if(n.includes('twitter')||n.includes('discord')) return svgIcon('globe',22);
+  return svgIcon('phone',22);
+}
+
+function serviceIconBg(name) {
+  const n=(name||'').toLowerCase();
+  if(n.includes('whatsapp')) return 'background:linear-gradient(135deg,#25d366,#128c7e)';
+  if(n.includes('telegram')) return 'background:linear-gradient(135deg,#2aabee,#229ed9)';
+  if(n.includes('instagram')) return 'background:linear-gradient(135deg,#e1306c,#fd1d1d,#fcb045)';
+  if(n.includes('facebook')||n.includes('meta')) return 'background:linear-gradient(135deg,#1877f2,#0d47a1)';
+  if(n.includes('google')) return 'background:linear-gradient(135deg,#4285f4,#34a853)';
+  if(n.includes('tiktok')) return 'background:linear-gradient(135deg,#010101,#69c9d0)';
+  if(n.includes('steam')||n.includes('game')) return 'background:linear-gradient(135deg,#1b2838,#c7d5e0)';
+  if(n.includes('shopee')||n.includes('tokopedia')) return 'background:linear-gradient(135deg,#f57224,#ee4d2d)';
+  if(n.includes('grab')) return 'background:linear-gradient(135deg,#00b14f,#007a36)';
+  if(n.includes('gojek')) return 'background:linear-gradient(135deg,#00aaa9,#008e8e)';
+  return 'background:linear-gradient(135deg,var(--blue-600),var(--sky))';
+}
+
+// ============================================================
+// INIT
+// ============================================================
+async function init() {
+  try {
+    const r = await api('GET','/api/auth/me');
+    if(!r.success) { window.location.replace('/login'); return; }
+    USER = r.user;
+    updateUserUI();
+    loadDashboard();
+    initDepositPage();
+  } catch(_) { window.location.replace('/login'); }
+}
+
+function updateUserUI() {
+  if(!USER) return;
+  const init = USER.username.substring(0,2).toUpperCase();
+  const bal = formatRp(USER.balance);
+  $('sb-avatar').textContent = init;
+  $('sb-name').textContent = USER.username;
+  $('sb-bal').textContent = bal;
+  $('tb-bal').textContent = bal;
+  $('tb-avatar').textContent = init;
+  if($('dash-greeting')) $('dash-greeting').textContent = `Selamat datang kembali, ${USER.username}!`;
+}
+
+async function doLogout() {
+  await api('POST','/api/auth/logout');
+  window.location.replace('/login');
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+const PAGE_TITLES = {dashboard:'Dashboard',order:'Order OTP',history:'Riwayat',deposit:'Deposit',profile:'Profil'};
+let currentPage = 'dashboard';
+
+function goPage(page) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.querySelectorAll('.mnav-item').forEach(n=>n.classList.remove('active'));
+  const p = $('page-'+page);
+  if(p) p.classList.add('active');
+  const nav = $('nav-'+page);
+  if(nav) nav.classList.add('active');
+  const mnav = $('mnav-'+page);
+  if(mnav) mnav.classList.add('active');
+  $('page-title').textContent = PAGE_TITLES[page]||page;
+  currentPage = page;
+  closeSidebar();
+  if(page==='dashboard') loadDashboard();
+  else if(page==='history') loadHistory();
+  else if(page==='profile') loadProfile();
+  else if(page==='order' && currentServer===1) loadS1Services();
+  else if(page==='order' && currentServer===2) loadS2Countries();
+}
+
+function toggleSidebar() {
+  $('sidebar').classList.toggle('open');
+  $('sidebar-overlay').classList.toggle('show');
+}
+function closeSidebar() {
+  $('sidebar').classList.remove('open');
+  $('sidebar-overlay').classList.remove('show');
+}
+
+// ============================================================
+// DASHBOARD
+// ============================================================
+async function loadDashboard() {
+  try {
+    const r = await api('GET','/api/dashboard');
+    if(!r.success) return;
+    const u = r.data.user;
+    USER.balance = u.balance;
+    updateUserUI();
+    $('s-balance').textContent = formatRp(u.balance);
+    $('s-deposit').textContent = formatRp(u.total_deposit);
+    $('s-order').textContent   = formatRp(u.total_order);
+    $('s-refund').textContent  = formatRp(u.total_refund);
+    // Recent orders
+    const orders = r.data.recentOrders||[];
+    setHTML('dash-orders', orders.length ? `<table class="data-table">
+      <thead><tr><th>Layanan</th><th>Nomor</th><th>Status</th></tr></thead>
+      <tbody>${orders.slice(0,5).map(o=>`<tr>
+        <td>${o.service_name}</td>
+        <td class="mono">${o.phone_number||'—'}</td>
+        <td>${statusBadge(o.status)}</td>
+      </tr>`).join('')}</tbody></table>` :
+      `<div class="empty-state"><div class="empty-icon">${svgIcon('phone',22)}</div><p>Belum ada order</p></div>`);
+    // Recent deposits
+    const deps = r.data.recentDeposits||[];
+    setHTML('dash-deps', deps.length ? `<table class="data-table">
+      <thead><tr><th>Invoice</th><th>Jumlah</th><th>Status</th></tr></thead>
+      <tbody>${deps.slice(0,5).map(d=>`<tr>
+        <td class="mono">${d.invoice}</td>
+        <td>${formatRp(d.amount)}</td>
+        <td>${statusBadge(d.status)}</td>
+      </tr>`).join('')}</tbody></table>` :
+      `<div class="empty-state"><div class="empty-icon">${svgIcon('bank',22)}</div><p>Belum ada deposit</p></div>`);
+  } catch(e) { toast('Gagal memuat dashboard','error'); }
+}
+
+// ============================================================
+// CUSTOM DROPDOWN ENGINE
+// ============================================================
+const cdStore = {}; // id → { items, value, label, onSelect }
+
+function cdInit(id, items, placeholder, onSelect, disabled=false) {
+  cdStore[id] = { items: items || [], value: null, label: null, onSelect };
+  const trigger = $('cdt-'+id);
+  const list    = $('cdl-'+id);
+  if(!trigger || !list) return;
+
+  trigger.disabled = disabled;
+  cdRenderList(id, items);
+
+  const valEl = trigger.querySelector('.cd-val');
+  valEl.textContent = placeholder || 'Pilih...';
+  valEl.className = 'cd-val cd-placeholder';
+  trigger.classList.remove('filled');
+}
+
+function cdRenderList(id, items) {
+  const list = $('cdl-'+id);
+  if(!list) return;
+  if(!items || !items.length) {
+    list.innerHTML = '<div class="cd-empty">Tidak ada data</div>';
+    return;
+  }
+  list.innerHTML = items.map(it =>
+    `<div class="cd-item${cdStore[id]?.value===it.value?' selected':''}"
+      data-value="${it.value}"
+      data-label="${it.label}"
+      data-price="${it.price||''}"
+      onclick="cdSelect('${id}',this)">
+      <span>${it.label}</span>
+      ${it.price ? `<span class="cd-item-right">Rp ${Number(it.price).toLocaleString('id-ID')}</span>` : ''}
+    </div>`
+  ).join('');
+}
+
+function cdFilter(id, query) {
+  const store = cdStore[id];
+  if(!store) return;
+  const q = query.toLowerCase();
+  const filtered = q ? store.items.filter(it => it.label.toLowerCase().includes(q)) : store.items;
+  cdRenderList(id, filtered);
+  // re-mark selected after filter
+  if(store.value) {
+    const list = $('cdl-'+id);
+    list?.querySelectorAll('.cd-item').forEach(el => {
+      el.classList.toggle('selected', el.dataset.value === store.value);
+    });
+  }
+}
+
+function cdSelect(id, el) {
+  const store = cdStore[id];
+  if(!store) return;
+  store.value = el.dataset.value;
+  store.label = el.dataset.label;
+  store.price = el.dataset.price;
+
+  // Update trigger display
+  const trigger = $('cdt-'+id);
+  const valEl   = trigger?.querySelector('.cd-val');
+  if(valEl) { valEl.textContent = el.dataset.label; valEl.className = 'cd-val'; }
+  trigger?.classList.add('filled');
+
+  // Mark selected item
+  $('cdl-'+id)?.querySelectorAll('.cd-item').forEach(d => d.classList.toggle('selected', d===el));
+
+  cdClose(id);
+  store.onSelect && store.onSelect(store.value, store.label, store.price);
+}
+
+function cdToggle(id) {
+  const trigger  = $('cdt-'+id);
+  const dropdown = $('cdd-'+id);
+  if(!trigger || !dropdown || trigger.disabled) return;
+  const isOpen = dropdown.classList.contains('open');
+  cdCloseAll();
+  if(!isOpen) {
+    // Hitung posisi trigger
+    const rect = trigger.getBoundingClientRect();
+    const spaceBelow = window.innerHeight - rect.bottom;
+    const dropH = Math.min(320, spaceBelow - 12);
+
+    dropdown.style.width  = rect.width + 'px';
+    dropdown.style.left   = rect.left + 'px';
+
+    // Kalau ruang bawah cukup → buka ke bawah, kalau tidak → buka ke atas
+    if(spaceBelow > 180) {
+      dropdown.style.top    = (rect.bottom + 6) + 'px';
+      dropdown.style.bottom = 'auto';
+    } else {
+      dropdown.style.bottom = (window.innerHeight - rect.top + 6) + 'px';
+      dropdown.style.top    = 'auto';
+    }
+
+    // Batasi tinggi list sesuai ruang tersedia
+    const listEl = dropdown.querySelector('.cd-list');
+    if(listEl) listEl.style.maxHeight = Math.max(120, dropH - 60) + 'px';
+
+    dropdown.classList.add('open');
+    trigger.classList.add('open');
+    dropdown.querySelector('.cd-search')?.focus();
+  }
+}
+
+function cdClose(id) {
+  $('cdd-'+id)?.classList.remove('open');
+  $('cdt-'+id)?.classList.remove('open');
+  // Reset search
+  const search = $('cdd-'+id)?.querySelector('.cd-search');
+  if(search) { search.value = ''; cdFilter(id, ''); }
+}
+
+function cdCloseAll() {
+  document.querySelectorAll('.cd-dropdown.open').forEach(d => {
+    const id = d.id.replace('cdd-','');
+    cdClose(id);
+  });
+}
+
+function cdSetLoading(id, msg='Memuat...') {
+  const list    = $('cdl-'+id);
+  const trigger = $('cdt-'+id);
+  if(list) list.innerHTML = `<div class="cd-loading"><div class="spinner"></div>${msg}</div>`;
+  if(trigger) {
+    trigger.disabled = true;
+    const valEl = trigger.querySelector('.cd-val');
+    if(valEl) { valEl.textContent = msg; valEl.className = 'cd-val cd-placeholder'; }
+    trigger.classList.remove('filled');
+  }
+}
+
+function cdSetDisabled(id, placeholder) {
+  const trigger = $('cdt-'+id);
+  if(!trigger) return;
+  trigger.disabled = true;
+  trigger.classList.remove('filled','open');
+  const valEl = trigger.querySelector('.cd-val');
+  if(valEl) { valEl.textContent = placeholder; valEl.className = 'cd-val cd-placeholder'; }
+  $('cdd-'+id)?.classList.remove('open');
+  $('cdl-'+id && ($('cdl-'+id).innerHTML = ''));
+  if(cdStore[id]) { cdStore[id].value=null; cdStore[id].label=null; }
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', e => {
+  if(!e.target.closest('.cd-wrap')) cdCloseAll();
+});
+
+// ============================================================
+// ORDER — SERVER TOGGLE
+// ============================================================
+let currentServer = 1;
+let pendingOrder  = null;
+let allProducts   = [];
+
+function selectServer(n) {
+  currentServer = n;
+  $('scard-1').classList.toggle('active', n===1);
+  $('scard-2').classList.toggle('active', n===2);
+  $('s1-filters').style.display = n===1 ? '' : 'none';
+  $('s2-filters').style.display = n===2 ? '' : 'none';
+  $('products-area').innerHTML = '';
+  allProducts = [];
+  cdCloseAll();
+  if(n===1) loadS1Services();
+  else      loadS2Countries();
+}
+
+function setDot(id, done) {
+  const el = $(id);
+  if(!el) return;
+  el.classList.toggle('done', done);
+}
+
+// ─── Server 1 ──────────────────────────────────────────────
+async function loadS1Services() {
+  cdSetLoading('s1-service', 'Memuat layanan...');
+  cdSetDisabled('s1-country', 'Pilih layanan dulu');
+  cdSetDisabled('s1-operator', 'Pilih negara dulu');
+  $('products-area').innerHTML = '';
+  setDot('dot-s1-svc', false);
+  setDot('dot-s1-ctr', false);
+  setDot('dot-s1-op',  false);
+  try {
+    const r = await api('GET', '/api/catalog/s1/services');
+    const items = (r.data||[]).map(s => ({
+      value: s.code || s.id || String(s),
+      label: s.name || s.code || String(s),
+    }));
+    cdInit('s1-service', items, 'Pilih layanan...', (val, label) => {
+      setDot('dot-s1-svc', true);
+      loadS1Countries(val, label);
+    });
+    $('cdt-s1-service').disabled = false;
+  } catch(e) {
+    cdInit('s1-service', [], 'Gagal memuat');
+    toast('Gagal memuat layanan Server 1', 'error');
+  }
+}
+
+async function loadS1Countries(svc, svcName) {
+  cdSetLoading('s1-country', 'Memuat negara...');
+  cdSetDisabled('s1-operator', 'Pilih negara dulu');
+  $('products-area').innerHTML = '';
+  setDot('dot-s1-ctr', false);
+  setDot('dot-s1-op',  false);
+  try {
+    const r = await api('GET', `/api/catalog/s1/countries?service=${encodeURIComponent(svc)}`);
+    const items = (r.data||[]).map(c => ({
+      value: c.code || c.id || String(c),
+      label: c.name || c.code || String(c),
+    }));
+    cdInit('s1-country', items, 'Pilih negara...', (val, label) => {
+      setDot('dot-s1-ctr', true);
+      loadS1Operators(svc, svcName, val, label);
+    });
+    $('cdt-s1-country').disabled = false;
+  } catch(e) {
+    cdInit('s1-country', [], 'Gagal memuat');
+    toast('Gagal memuat negara', 'error');
+  }
+}
+
+async function loadS1Operators(svc, svcName, ctr, ctrName) {
+  cdSetLoading('s1-operator', 'Memuat operator...');
+  $('products-area').innerHTML = '';
+  setDot('dot-s1-op', false);
+  try {
+    const r = await api('GET', `/api/catalog/s1/operators?service=${encodeURIComponent(svc)}&country=${encodeURIComponent(ctr)}`);
+    const items = (r.data||[]).map(o => {
+      const code = o.code || o.id || o.operator || String(o);
+      const name = o.name || o.operator_name || code;
+      let price = 0;
+      if(o.price)                              price = parseInt(o.price);
+      else if(o.pricelist?.length)             price = parseInt(o.pricelist[0].price || o.pricelist[0].amount || 0);
+      else if(o.cost)                          price = parseInt(o.cost);
+      else if(o.amount)                        price = parseInt(o.amount);
+      return { value: code, label: name, price };
+    });
+    cdInit('s1-operator', items, 'Pilih operator...', (val, label, price) => {
+      setDot('dot-s1-op', true);
+      renderProducts([{
+        id: svc, product_id: svc,
+        name: svcName,
+        country: ctrName, country_code: ctr,
+        operator: val, operator_name: label,
+        price: parseInt(price) || 0,
+      }], 'rumahotp', ctr, val, svcName, ctrName);
+    });
+    $('cdt-s1-operator').disabled = false;
+  } catch(e) {
+    cdInit('s1-operator', [], 'Gagal memuat');
+    toast('Gagal memuat operator', 'error');
+  }
+}
+
+// ─── Server 2 ──────────────────────────────────────────────
+async function loadS2Countries() {
+  cdSetLoading('s2-country', 'Memuat negara...');
+  cdSetDisabled('s2-service', 'Pilih negara dulu');
+  $('products-area').innerHTML = '';
+  setDot('dot-s2-ctr', false);
+  setDot('dot-s2-svc', false);
+  try {
+    const r = await api('GET', '/api/catalog/s2/countries');
+    const items = (r.data||[]).map(c => ({
+      value: String(c.id || c.code),
+      label: c.name || c.code,
+    }));
+    cdInit('s2-country', items, 'Pilih negara...', (val, label) => {
+      setDot('dot-s2-ctr', true);
+      loadS2Services(val, label);
+    });
+    $('cdt-s2-country').disabled = false;
+  } catch(e) {
+    cdInit('s2-country', [], 'Gagal memuat');
+    toast('Gagal memuat negara', 'error');
+  }
+}
+
+async function loadS2Services(cid, ctrName) {
+  cdSetLoading('s2-service', 'Memuat layanan...');
+  $('products-area').innerHTML = '';
+  setDot('dot-s2-svc', false);
+  try {
+    const r = await api('GET', `/api/catalog/s2/services?country_id=${cid}`);
+    const items = (r.data||[]).map(s => ({
+      value: String(s.id),
+      label: s.name || s.platform_name,
+    }));
+    cdInit('s2-service', items, 'Pilih layanan...', (val, label) => {
+      setDot('dot-s2-svc', true);
+      loadS2Products(cid, val, label, ctrName);
+    });
+    $('cdt-s2-service').disabled = false;
+  } catch(e) {
+    cdInit('s2-service', [], 'Gagal memuat');
+    toast('Gagal memuat layanan', 'error');
+  }
+}
+
+async function loadS2Products(cid, sid, svcName, ctrName) {
+  $('products-area').innerHTML = `<div class="loading-products"><div class="spinner"></div><span>Memuat produk tersedia...</span></div>`;
+  try {
+    const r = await api('GET', `/api/catalog/s2/products?country_id=${cid}&platform_id=${sid}`);
+    renderProducts(r.data||[], 'smscode', cid, '', svcName, ctrName);
+  } catch(e) {
+    $('products-area').innerHTML = `<div class="order-empty"><div class="order-empty-icon">${svgIcon('alert',28)}</div><h3>Gagal Memuat</h3><p>Terjadi kesalahan. Coba lagi.</p></div>`;
+    toast('Gagal memuat produk', 'error');
+  }
+}
+
+// ── Render Products ─────────────────────────────────────────
+function renderProducts(products, server, country, operator, serviceName, countryName) {
+  allProducts = products;
+  if(!products || !products.length) {
+    $('products-area').innerHTML = `<div class="order-empty">
+      <div class="order-empty-icon">${svgIcon('phone',28)}</div>
+      <h3>Tidak Ada Produk</h3>
+      <p>Tidak ada nomor tersedia untuk filter yang dipilih.<br>Coba ganti negara atau operator.</p>
+    </div>`;
+    return;
+  }
+  const header = `<div class="products-header">
+    <div class="products-header-left">
+      <div class="order-step-num">3</div>
+      <div class="order-step-title">Pilih & Beli Produk</div>
+      <span class="products-count">${products.length} produk</span>
+    </div>
+    ${products.length > 4 ? `<div class="products-search-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input class="products-search" type="text" placeholder="Cari produk..."
+        oninput="filterProducts(this.value,'${server}','${country}','${operator}','${serviceName}','${countryName||country}')"/>
+    </div>` : ''}
+  </div>`;
+  $('products-area').innerHTML = header + `<div id="product-grid-inner">${buildProductGrid(products,server,country,operator,serviceName,countryName||country)}</div>`;
+}
+
+function filterProducts(query, server, country, operator, serviceName, countryName) {
+  const q = query.toLowerCase();
+  const filtered = q ? allProducts.filter(p =>
+    (p.name||serviceName||'').toLowerCase().includes(q) ||
+    (p.operator_name||p.operator||operator||'').toLowerCase().includes(q)
+  ) : allProducts;
+  const inner = $('product-grid-inner');
+  if(inner) inner.innerHTML = buildProductGrid(filtered,server,country,operator,serviceName,countryName);
+}
+
+function buildProductGrid(products, server, country, operator, serviceName, countryName) {
+  if(!products.length) return `<div class="order-empty" style="margin-top:0">
+    <div class="order-empty-icon">${svgIcon('search',28)}</div>
+    <h3>Tidak Ditemukan</h3><p>Coba kata kunci lain.</p>
+  </div>`;
+  return `<div class="product-grid">${products.map(p => {
+    const pid    = p.product_id || p.id;
+    const name   = p.name || p.service_name || serviceName;
+    const price  = p.price || 0;
+    const opName = p.operator_name || p.operator || operator || '';
+    const ctr    = countryName || p.country || country;
+    const tags   = [
+      ctr    ? `<span class="pcn-meta-tag">${ctr}</span>`    : '',
+      opName ? `<span class="pcn-meta-tag">${opName}</span>` : '',
+    ].filter(Boolean).join('');
+    const orderData = {
+      server, product_id: String(pid), service_name: name,
+      country: p.country_code||country, operator: p.operator||operator, price,
+    };
+    return `<div class="product-card-new">
+      <div class="pcn-icon" style="${serviceIconBg(name)}">${serviceIcon(name)}</div>
+      <div class="pcn-name">${name}</div>
+      <div class="pcn-meta">${tags||`<span class="pcn-meta-tag">Server ${server==='rumahotp'?'1':'2'}</span>`}</div>
+      <div class="pcn-footer">
+        <div>
+          <div class="pcn-price">${formatRp(price)}</div>
+          <div class="pcn-price-sub">per nomor</div>
+        </div>
+        <button class="pcn-buy" onclick='openOrderModal(${JSON.stringify(JSON.stringify(orderData))})'>
+          ${svgIcon('plus',11)} Beli
+        </button>
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+// ============================================================
+// HISTORY
+// ============================================================
+let histTab = 'orders';
+function switchHistoryTab(tab) {
+  histTab=tab;
+  $('htab-orders').classList.toggle('active',tab==='orders');
+  $('htab-deposits').classList.toggle('active',tab==='deposits');
+  loadHistory();
+}
+
+async function loadHistory() {
+  setHTML('history-content','<div class="loading"><div class="spinner"></div> Memuat...</div>');
+  try {
+    if(histTab==='orders'){
+      const r=await api('GET','/api/history/orders?limit=30');
+      renderOrderHistory(r.data||[]);
+    } else {
+      const r=await api('GET','/api/history/deposits?limit=30');
+      renderDepositHistory(r.data||[]);
+    }
+  } catch(e){ setHTML('history-content','<div class="empty-state"><p>Gagal memuat riwayat</p></div>'); }
+}
+
+function renderOrderHistory(orders) {
+  if(!orders.length){
+    setHTML('history-content',`<div class="empty-state"><div class="empty-icon">${svgIcon('phone',22)}</div><p>Belum ada order OTP</p></div>`);
+    return;
+  }
+  setHTML('history-content',`<div style="display:flex;flex-direction:column;gap:10px">${orders.map(o=>orderCard(o)).join('')}</div>`);
+}
+
+function orderCard(o) {
+  const isActive=o.status==='ACTIVE';
+  const hasOTP=o.otp_code&&o.status==='OTP_RECEIVED';
+  return `<div class="order-card" id="oc-${o.id}">
+    <div class="oc-top">
+      <div class="oc-service">
+        <div class="oc-svc-icon" style="${serviceIconBg(o.service_name)}">${serviceIcon(o.service_name)}</div>
+        <div><div class="oc-svc-name">${o.service_name}</div><div class="oc-svc-meta">Server ${o.server==='rumahotp'?'1':'2'} · ${formatDate(o.created_at)}</div></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">${statusBadge(o.status)}<span style="font-weight:700;font-size:.85rem;color:var(--blue-700)">${formatRp(o.price)}</span></div>
+    </div>
+    <div class="oc-mid">
+      <div class="oc-field"><label>Nomor</label><span class="oc-phone">${o.phone_number||'—'}</span></div>
+      <div class="oc-field"><label>Negara</label><span>${o.country||'—'}</span></div>
+      <div class="oc-field"><label>Operator</label><span>${o.operator||'—'}</span></div>
+    </div>
+    <div class="oc-otp-wrap">
+      <div class="oc-otp-left">
+        <label>Kode OTP</label>
+        ${hasOTP
+          ? `<div class="oc-otp-code">${o.otp_code}</div>`
+          : `<div class="oc-otp-waiting"><div class="spinner"></div> Menunggu OTP...</div>`}
+      </div>
+      ${hasOTP ? `<button class="oc-copy-btn" onclick="copyText('${o.otp_code}','OTP')">${svgIcon('copy',11)} Salin</button>` : ''}
+    </div>
+    <div class="oc-actions">
+      ${o.phone_number?`<button class="btn btn-outline-blue btn-sm" onclick="copyText('${o.phone_number}','Nomor')">${svgIcon('copy',14)} Salin Nomor</button>`:''}
+      ${isActive?`<button class="btn btn-danger-soft btn-sm" onclick="cancelOrder('${o.id}')">${svgIcon('cancel',14)} Batalkan</button>`:''}
+      ${hasOTP?`<button class="btn btn-success-soft btn-sm" onclick="finishOrder('${o.id}')">${svgIcon('finish',14)} Selesai</button>`:''}
+    </div>
+  </div>`;
+}
+
+function renderDepositHistory(deps) {
+  if(!deps.length){
+    setHTML('history-content',`<div class="empty-state"><div class="empty-icon">${svgIcon('bank',22)}</div><p>Belum ada deposit</p></div>`);
+    return;
+  }
+  setHTML('history-content',`<div class="section-card"><div style="overflow-x:auto"><table class="data-table">
+    <thead><tr><th>Invoice</th><th>Jumlah</th><th>Metode</th><th>Status</th><th>Waktu</th></tr></thead>
+    <tbody>${deps.map(d=>`<tr>
+      <td class="mono">${d.invoice}</td>
+      <td style="font-weight:700;color:var(--blue-700)">${formatRp(d.amount)}</td>
+      <td>${d.payment_method||'—'}</td>
+      <td>${statusBadge(d.status)}</td>
+      <td style="color:var(--muted);font-size:.78rem">${formatDate(d.created_at)}</td>
+    </tr>`).join('')}</tbody>
+  </table></div></div>`);
+}
+
+// ============================================================
+// POLLING
+// ============================================================
+const activePolls = {};
+function startPolling(orderId) {
+  if(activePolls[orderId]) return;
+  const maxTime = Date.now() + 20*60*1000;
+  activePolls[orderId] = setInterval(async()=>{
+    if(Date.now()>maxTime){ clearInterval(activePolls[orderId]); delete activePolls[orderId]; return; }
+    try{
+      const r=await api('GET',`/api/order/${orderId}/status`);
+      if(!r.success) return;
+      const o=r.order;
+      const card=$(`oc-${orderId}`);
+      if(card){
+        const newCard=document.createElement('div');
+        newCard.innerHTML=orderCard(o);
+        card.replaceWith(newCard.firstChild);
+      }
+      if(['COMPLETED','OTP_RECEIVED','CANCELED','EXPIRED','FAILED'].includes(o.status)){
+        clearInterval(activePolls[orderId]); delete activePolls[orderId];
+        if(o.status==='OTP_RECEIVED'||o.status==='COMPLETED'){
+          toast(`OTP diterima: ${o.otp_code}`,'success',6000);
+          USER.balance=o.new_balance||USER.balance;
+          updateUserUI();
+        }
+      }
+    }catch(e){}
+  }, 5000);
+}
+
+async function cancelOrder(orderId) {
+  if(!confirm('Batalkan order ini?')) return;
+  const r=await api('POST','/api/order/cancel',{order_id:orderId});
+  if(r.success){ toast('Order dibatalkan'+(r.refunded?', saldo dikembalikan':''),'success'); loadHistory(); if(r.new_balance!==undefined){USER.balance=r.new_balance;updateUserUI();} }
+  else toast(r.error||'Gagal membatalkan','error');
+}
+
+async function finishOrder(orderId) {
+  const r=await api('POST','/api/order/finish',{order_id:orderId});
+  if(r.success){ toast('Order diselesaikan','success'); loadHistory(); }
+  else toast(r.error||'Gagal','error');
+}
+
+// ============================================================
+// DEPOSIT
+// ============================================================
+const AMOUNTS=[5000,10000,15000,20000];
+const METHODS=[
+  {id:'qris',   name:'QRIS',   desc:'Semua e-wallet', icon:'qris'},
+  {id:'bri',    name:'BRI VA', desc:'Virtual Account', icon:'bank'},
+  {id:'bni',    name:'BNI VA', desc:'Virtual Account', icon:'bank'},
+  {id:'bca',    name:'BCA VA', desc:'Virtual Account', icon:'bank'},
+  {id:'permata',name:'Permata',desc:'Virtual Account', icon:'bank'},
+  {id:'redirect',name:'Link Pay',desc:'Bayar via link', icon:'link'},
+];
+let selAmount=5000, selMethod='qris';
+
+function initDepositPage(){
+  $('amount-chips').innerHTML=AMOUNTS.map(a=>`<button class="amount-chip${a===selAmount?' sel':''}" onclick="selectAmount(${a})">${formatRp(a)}</button>`).join('');
+  $('method-grid').innerHTML=METHODS.map(m=>`<div class="method-card${m.id===selMethod?' sel':''}" onclick="selectMethod('${m.id}')">
+    ${svgIcon(m.icon,22)}<div class="method-card-name">${m.name}</div><div class="method-card-desc">${m.desc}</div>
+  </div>`).join('');
+}
+function selectAmount(amt){
+  selAmount=amt; $('dep-custom').value='';
+  document.querySelectorAll('.amount-chip').forEach((c,i)=>c.classList.toggle('sel',AMOUNTS[i]===amt));
+}
+function onCustomAmount(val){
+  selAmount=parseInt(val)||0;
+  document.querySelectorAll('.amount-chip').forEach(c=>c.classList.remove('sel'));
+}
+function selectMethod(mid){
+  selMethod=mid;
+  document.querySelectorAll('.method-card').forEach(c=>c.classList.remove('sel'));
+  event.currentTarget.classList.add('sel');
+}
+
+async function doDeposit(){
+  if(!selAmount||selAmount<5000){toast('Minimal deposit Rp 5.000','warn');return;}
+  const r=await api('POST','/api/deposit/create',{amount:selAmount,payment_method:selMethod});
+  if(!r.success){toast(r.error||'Gagal membuat deposit','error');return;}
+  toast('Deposit dibuat! Segera lakukan pembayaran.','success');
+  const pay=r.payment;
+  const box=`<div class="payment-box">
+    <div class="payment-box-label">Invoice</div>
+    <div class="payment-box-val" style="font-size:.85rem">${r.invoice}</div>
+  </div>
+  ${pay.type==='api'&&pay.payment_number?`<div class="payment-box">
+    <div class="payment-box-label">Nomor Pembayaran</div>
+    <div class="payment-box-val">${pay.payment_number}</div>
+    <button class="payment-box-copy" onclick="copyText('${pay.payment_number}','Nomor pembayaran')">${svgIcon('copy',12)} Salin</button>
+  </div>`:''}
+  <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
+    ${pay.payment_url?`<a href="${pay.payment_url}" target="_blank" class="btn btn-blue btn-sm">${svgIcon('link',14)} Buka Halaman Bayar</a>`:''}
+    <button class="btn btn-outline-blue btn-sm" onclick="pollDeposit('${r.invoice}',${r.amount})">${svgIcon('info',14)} Cek Status</button>
+  </div>
+  <div id="dep-status-msg" style="margin-top:10px;font-size:.83rem;color:var(--muted)">Menunggu pembayaran...</div>`;
+  $('deposit-status-box').innerHTML=box;
+  pollDeposit(r.invoice, r.amount);
+}
+
+function pollDeposit(invoice, amount){
+  let tries=0;
+  const iv=setInterval(async()=>{
+    tries++;
+    if(tries>240){clearInterval(iv);setHTML('dep-status-msg','Waktu habis. Cek manual via Riwayat Deposit.');return;}
+    try{
+      const r=await api('GET',`/api/deposit/status/${invoice}`);
+      if(r.deposit?.status==='completed'){
+        clearInterval(iv);
+        toast('Deposit berhasil! Saldo bertambah.','success',5000);
+        setHTML('dep-status-msg',`<span class="badge badge-success">${svgIcon('check',12)} Pembayaran diterima!</span>`);
+        await refreshBalance();
+      }
+    }catch(e){}
+  }, 5000);
+}
+
+async function refreshBalance(){
+  try{
+    const r=await api('GET','/api/profile');
+    if(r.success){USER.balance=r.profile.balance;updateUserUI();}
+  }catch(e){}
+}
+
+// ============================================================
+// PROFILE
+// ============================================================
+async function loadProfile(){
+  setHTML('profile-content','<div class="loading"><div class="spinner"></div> Memuat...</div>');
+  try{
+    const r=await api('GET','/api/profile');
+    if(!r.success) return;
+    const u=r.profile;
+    const init=u.username.substring(0,2).toUpperCase();
+    setHTML('profile-content',`
+      <div class="profile-hero">
+        <div class="profile-avatar-big">${init}</div>
+        <div class="profile-info">
+          <div class="profile-name">${u.username}</div>
+          <div class="profile-email">${u.email}</div>
+          <span class="badge ${u.status==='active'?'badge-success':'badge-danger'}">${u.status==='active'?'Aktif':'Nonaktif'}</span>
+        </div>
+      </div>
+      <div class="profile-stats">
+        <div class="profile-stat"><div class="ps-label">${svgIcon('bank',12)} Saldo</div><div class="ps-val">${formatRp(u.balance)}</div></div>
+        <div class="profile-stat"><div class="ps-label">Total Deposit</div><div class="ps-val">${formatRp(u.total_deposit)}</div></div>
+        <div class="profile-stat"><div class="ps-label">Total Order</div><div class="ps-val">${formatRp(u.total_order)}</div></div>
+        <div class="profile-stat"><div class="ps-label">Total Refund</div><div class="ps-val">${formatRp(u.total_refund)}</div></div>
+        <div class="profile-stat"><div class="ps-label">Total Transaksi</div><div class="ps-val">${u.total_tx}</div></div>
+        <div class="profile-stat"><div class="ps-label">Bergabung Sejak</div><div class="ps-val" style="font-size:.95rem">${formatDate(u.created_at)}</div></div>
+      </div>
+      <div class="section-card">
+        <div class="sc-head"><div class="sc-head-left"><div class="sc-head-icon">${svgIcon('alert',16)}</div><h3>Info Akun</h3></div></div>
+        <div class="sc-body" style="display:grid;gap:10px">
+          <div style="display:flex;justify-content:space-between;padding:10px;background:var(--surf);border-radius:var(--rs);border:1px solid var(--border)">
+            <span style="font-size:.85rem;color:var(--muted);font-weight:500">Username</span>
+            <span style="font-weight:600;font-size:.85rem">${u.username}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:10px;background:var(--surf);border-radius:var(--rs);border:1px solid var(--border)">
+            <span style="font-size:.85rem;color:var(--muted);font-weight:500">Email</span>
+            <span style="font-weight:600;font-size:.85rem">${u.email}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:10px;background:var(--surf);border-radius:var(--rs);border:1px solid var(--border)">
+            <span style="font-size:.85rem;color:var(--muted);font-weight:500">Status Akun</span>
+            <span>${statusBadge(u.status)}</span>
+          </div>
+        </div>
+      </div>`);
+  }catch(e){setHTML('profile-content','<div class="empty-state"><p>Gagal memuat profil</p></div>');}
+}
+
+// ============================================================
+// MODAL UTILS
+// ============================================================
+function openModal(id) { $(id).classList.add('open'); }
+function closeModal(id) { $(id).classList.remove('open'); }
+function copyText(text, label) {
+  navigator.clipboard.writeText(text).then(()=>toast(`${label} berhasil disalin!`,'success'));
+}
+document.querySelectorAll('.modal-overlay').forEach(el=>{
+  el.addEventListener('click',e=>{ if(e.target===el) closeModal(el.id); });
+});
+
+// ============================================================
+// INIT
+// ============================================================
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
