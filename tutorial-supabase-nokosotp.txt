@@ -1,0 +1,236 @@
+================================================
+   TUTORIAL SETUP SUPABASE UNTUK NOKOSOTP
+================================================
+
+Pastikan kamu sudah punya:
+- Akun Supabase (gratis di supabase.com)
+- File project NokosOTP (index.js, config.js, dll)
+- Node.js versi 18 ke atas
+
+
+================================================
+LANGKAH 1 — BUAT PROJECT SUPABASE
+================================================
+
+1. Buka https://supabase.com
+2. Login atau daftar akun baru (gratis)
+3. Klik tombol "New Project"
+4. Isi:
+   - Organization: pilih yang ada atau buat baru
+   - Name: nokosotp (bebas)
+   - Database Password: buat password kuat, SIMPAN baik-baik
+   - Region: pilih yang terdekat (Southeast Asia / Singapore)
+5. Klik "Create new project"
+6. Tunggu sekitar 1-2 menit sampai project siap
+
+
+================================================
+LANGKAH 2 — AMBIL API CREDENTIALS
+================================================
+
+1. Di dashboard project, klik menu "Settings" (ikon gear)
+2. Klik sub-menu "API"
+3. Catat dua hal ini:
+
+   PROJECT URL:
+   Contoh: https://abcdefghijklmnop.supabase.co
+   --> Ini untuk config.js bagian supabase.url
+
+   SERVICE ROLE KEY (bukan anon key!):
+   Contoh: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.xxxx
+   --> Ini untuk config.js bagian supabase.serviceKey
+
+   PENTING: Jangan pakai "anon public" key!
+   Harus pakai "service_role" key yang ada di bawahnya.
+
+
+================================================
+LANGKAH 3 — ISI CONFIG.JS
+================================================
+
+Buka file config.js, cari bagian ini dan isi:
+
+  supabase: {
+    url: 'https://XXXX.supabase.co',      <-- ganti dengan Project URL kamu
+    serviceKey: 'eyJhbGci...',            <-- ganti dengan service_role key kamu
+  },
+
+Simpan file config.js.
+
+
+================================================
+LANGKAH 4 — BUAT TABEL DATABASE (SQL)
+================================================
+
+1. Di dashboard Supabase, klik menu "SQL Editor"
+2. Klik "New query"
+3. Buka file config.js kamu
+4. Scroll paling bawah, cari bagian komentar yang dimulai dengan:
+      /* 
+      -- 1. TABEL USERS
+5. Copy SEMUA isi SQL dari tanda /* sampai tanda */
+   (jangan copy tanda /* dan */ nya)
+6. Paste ke SQL Editor Supabase
+7. Klik tombol "Run" (atau tekan Ctrl+Enter)
+8. Tunggu sampai muncul pesan "Success"
+
+Kalau berhasil, akan terbuat 7 tabel:
+- users
+- sessions
+- otp_orders
+- deposits
+- webhook_logs
+- balance_transactions
+- audit_logs
+
+Dan 3 function/RPC:
+- deduct_balance
+- credit_balance
+- process_refund
+
+
+================================================
+LANGKAH 5 — MATIKAN KONFIRMASI EMAIL
+================================================
+
+(Agar daftar akun langsung bisa login tanpa verifikasi)
+
+1. Klik menu "Authentication"
+2. Klik "Providers"
+3. Klik "Email"
+4. Cari opsi "Confirm email" --> matikan (toggle OFF)
+5. Klik Save / Confirm
+
+Catatan: NokosOTP pakai sistem login sendiri,
+bukan Supabase Auth. Langkah ini hanya pencegahan
+agar tidak ada konflik.
+
+
+================================================
+LANGKAH 6 — COBA JALANKAN SERVER
+================================================
+
+Buka terminal / command prompt di folder project:
+
+  npm install
+  node index.js
+
+Kalau berhasil akan muncul:
+  Server running on port 3000
+
+Buka browser: http://localhost:3000/login
+
+
+================================================
+LANGKAH 7 — TEST DAFTAR AKUN
+================================================
+
+1. Buka http://localhost:3000/login
+2. Klik tab "Daftar"
+3. Isi:
+   - Username: bebas (min 3 karakter, huruf/angka/_)
+   - Email: email kamu
+   - Password: min 8 karakter
+   - Konfirmasi Password: sama dengan password
+4. Klik "Buat Akun"
+5. Kalau berhasil akan langsung masuk ke dashboard
+
+Cek di Supabase:
+- Buka menu "Table Editor"
+- Klik tabel "users"
+- Data akun kamu seharusnya sudah muncul di sana
+
+
+================================================
+LANGKAH 8 — ISI KONFIGURASI LAINNYA (OPSIONAL)
+================================================
+
+Buka config.js dan isi sesuai kebutuhan:
+
+SERVER:
+  baseUrl -> ganti dengan domain kamu kalau sudah online
+             contoh: https://nokosotp.com
+
+RUMAHOTP (Server 1):
+  apiKey -> isi dengan API key dari rumahotp.io
+
+SMSCODE (Server 2):
+  apiToken -> isi dengan token dari smscode.gg
+
+PAKASIR (Payment Gateway):
+  slug    -> project slug dari pakasir
+  apiKey  -> API key dari pakasir
+
+BRANDING:
+  faviconUrl  -> link favicon website kamu
+  logoIconUrl -> link icon/logo kamu (64x64 pixel)
+  supportEmail -> email support kamu
+  telegramSupport -> link telegram support kamu
+
+
+================================================
+TROUBLESHOOTING (MASALAH UMUM)
+================================================
+
+ERROR: Invalid API key
+--> Pastikan pakai service_role key, bukan anon key
+
+ERROR: relation "users" does not exist
+--> SQL belum dijalankan. Ulangi Langkah 4.
+
+ERROR: Cannot connect to Supabase
+--> Cek supabase.url sudah benar
+--> Pastikan ada koneksi internet
+
+ERROR: Port 3000 already in use
+--> Ganti port di config.js bagian server.port
+    Contoh: port: 3001
+
+Daftar berhasil tapi tidak bisa login
+--> Cek apakah config.js sudah disave setelah diisi
+--> Restart server: Ctrl+C lalu node index.js lagi
+
+Dashboard tidak muncul setelah login
+--> Buka DevTools browser (F12) --> Console
+--> Lihat error apa yang muncul
+
+
+================================================
+STRUKTUR FILE PROJECT
+================================================
+
+nokosotp/
+├── index.js        --> Backend server (jangan diubah)
+├── config.js       --> Semua konfigurasi (wajib diisi)
+├── package.json    --> Daftar dependencies
+├── login.html      --> Halaman login & landing page
+└── menu.html       --> Halaman dashboard utama
+
+
+================================================
+PERINTAH PENTING
+================================================
+
+Install dependencies (sekali saja):
+  npm install
+
+Jalankan server:
+  node index.js
+
+Jalankan dengan auto-restart (development):
+  npm run dev
+
+Stop server:
+  Ctrl + C
+
+
+================================================
+KONTAK & SUPPORT
+================================================
+
+Jika ada pertanyaan atau kendala, hubungi support
+melalui kontak yang tertera di konfigurasi aplikasi.
+
+================================================
+   Selamat menggunakan NokosOTP!
+================================================

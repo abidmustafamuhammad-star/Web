@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>NokosOTP — Platform OTP Terpercaya</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f0f6ff;--white:#fff;--surf:#f8fbff;--card:#fff;
+  --blue-50:#eff6ff;--blue-100:#dbeafe;--blue-200:#bfdbfe;
+  --blue-500:#3b82f6;--blue-600:#2563eb;--blue-700:#1d4ed8;--blue-800:#1e40af;--blue-900:#1e3a8a;
+  --sky:#0ea5e9;--indigo:#6366f1;
+  --border:#dde9ff;--border2:#bfd3ff;
+  --text:#0f172a;--muted:#64748b;--dim:#94a3b8;
+  --success:#10b981;--warn:#f59e0b;--danger:#ef4444;
+  --font-d:'Bricolage Grotesque',sans-serif;
+  --font-b:'Plus Jakarta Sans',sans-serif;
+  --font-m:'JetBrains Mono',monospace;
+  --r:14px;--rs:8px;
+  --sh:0 4px 24px rgba(37,99,235,.08);
+  --sh2:0 12px 48px rgba(37,99,235,.15);
+}
+html,body{min-height:100%;font-family:var(--font-b);background:var(--bg);color:var(--text);overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--blue-200);border-radius:10px}
+
+/* ── Page transitions ── */
+.page{transition:opacity .35s ease,transform .35s ease}
+.page.hidden{opacity:0;pointer-events:none;position:fixed;inset:0;z-index:-1;transform:translateY(12px)}
+
+/* ============================================================
+   LANDING PAGE
+============================================================ */
+/* ── NAV ── */
+.lp-nav{
+  position:sticky;top:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 5%;height:68px;
+  background:rgba(255,255,255,.82);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+}
+.nav-logo{display:flex;align-items:center;gap:10px;cursor:pointer}
+.nav-logo-icon{
+  width:38px;height:38px;border-radius:10px;
+  background:linear-gradient(135deg,var(--blue-600),var(--sky));
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 12px rgba(37,99,235,.3);flex-shrink:0;
+}
+.nav-logo-icon img{width:24px;height:24px;object-fit:contain;filter:brightness(10)}
+.nav-logo-icon svg{width:20px;height:20px;color:#fff}
+.nav-logo-text{font-family:var(--font-d);font-weight:800;font-size:1.25rem;color:var(--blue-800);letter-spacing:-.02em}
+.nav-links{display:flex;align-items:center;gap:28px}
+.nav-links a{font-size:.875rem;font-weight:500;color:var(--muted);transition:color .2s}
+.nav-links a:hover{color:var(--blue-600)}
+.nav-actions{display:flex;align-items:center;gap:10px}
+.btn-outline{
+  padding:8px 20px;border-radius:var(--rs);border:1.5px solid var(--blue-600);
+  color:var(--blue-600);font-weight:600;font-size:.875rem;cursor:pointer;
+  background:transparent;transition:all .2s;font-family:var(--font-b);
+}
+.btn-outline:hover{background:var(--blue-50)}
+.btn-primary{
+  padding:9px 22px;border-radius:var(--rs);border:none;
+  background:linear-gradient(135deg,var(--blue-600),var(--blue-700));
+  color:#fff;font-weight:600;font-size:.875rem;cursor:pointer;
+  box-shadow:0 4px 12px rgba(37,99,235,.3);transition:all .2s;
+  font-family:var(--font-b);
+}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(37,99,235,.4)}
+.btn-primary:active{transform:translateY(0)}
+
+/* ── HERO ── */
+.hero{
+  position:relative;overflow:hidden;
+  min-height:calc(100vh - 68px);
+  display:flex;align-items:center;
+  padding:80px 5% 100px;
+  background:linear-gradient(160deg,#f0f6ff 0%,#e8f0ff 40%,#f5f0ff 100%);
+}
+.hero-bg{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.hero-orb1{
+  position:absolute;top:-20%;right:5%;width:600px;height:600px;border-radius:50%;
+  background:radial-gradient(circle,rgba(37,99,235,.12) 0%,transparent 70%);
+}
+.hero-orb2{
+  position:absolute;bottom:-10%;left:-5%;width:500px;height:500px;border-radius:50%;
+  background:radial-gradient(circle,rgba(99,102,241,.1) 0%,transparent 70%);
+}
+.hero-grid{
+  position:absolute;inset:0;
+  background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
+  background-size:60px 60px;opacity:.4;
+}
+.hero-inner{
+  position:relative;z-index:1;max-width:1200px;margin:0 auto;width:100%;
+  display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;
+}
+.hero-left{}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--blue-50);border:1.5px solid var(--blue-100);
+  border-radius:999px;padding:6px 14px 6px 8px;margin-bottom:28px;
+}
+.hero-badge-dot{width:8px;height:8px;border-radius:50%;background:var(--success);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(1.2)}}
+.hero-badge span{font-size:.8rem;font-weight:600;color:var(--blue-700)}
+.hero-title{
+  font-family:var(--font-d);font-size:clamp(2.4rem,5vw,3.6rem);font-weight:800;
+  color:var(--text);line-height:1.1;letter-spacing:-.03em;margin-bottom:20px;
+  white-space:pre-line;
+}
+.hero-title em{
+  font-style:normal;
+  background:linear-gradient(135deg,var(--blue-600),var(--sky));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero-sub{font-size:1.05rem;color:var(--muted);line-height:1.7;max-width:480px;margin-bottom:36px}
+.hero-ctas{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:48px}
+.btn-hero{
+  padding:13px 28px;border-radius:var(--r);font-size:1rem;
+  font-weight:700;font-family:var(--font-b);cursor:pointer;
+  display:flex;align-items:center;gap:8px;transition:all .2s;border:none;
+}
+.btn-hero-primary{
+  background:linear-gradient(135deg,var(--blue-600),var(--blue-700));
+  color:#fff;box-shadow:0 8px 24px rgba(37,99,235,.35);
+}
+.btn-hero-primary:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(37,99,235,.45)}
+.btn-hero-secondary{background:var(--white);color:var(--blue-700);border:2px solid var(--blue-200)}
+.btn-hero-secondary:hover{border-color:var(--blue-400);background:var(--blue-50)}
+.hero-stats{display:flex;gap:32px;flex-wrap:wrap}
+.hero-stat .num{font-family:var(--font-d);font-size:1.6rem;font-weight:800;color:var(--blue-700)}
+.hero-stat .lbl{font-size:.78rem;color:var(--muted);font-weight:500;margin-top:2px}
+
+/* ── Hero Right: floating cards ── */
+.hero-right{position:relative;display:flex;justify-content:center;align-items:center}
+.hero-card-main{
+  background:var(--white);border-radius:20px;padding:24px;
+  box-shadow:var(--sh2);border:1px solid var(--border);
+  width:320px;animation:float 4s ease-in-out infinite;
+}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.hcm-header{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.hcm-icon{
+  width:44px;height:44px;border-radius:12px;
+  background:linear-gradient(135deg,#25d366,#128c7e);
+  display:flex;align-items:center;justify-content:center;
+}
+.hcm-icon svg{width:22px;height:22px;color:#fff}
+.hcm-title{font-family:var(--font-d);font-weight:700;font-size:1rem;color:var(--text)}
+.hcm-sub{font-size:.78rem;color:var(--muted)}
+.hcm-phone{
+  background:var(--blue-50);border:1px solid var(--blue-100);border-radius:10px;
+  padding:12px 14px;font-family:var(--font-m);font-size:.95rem;
+  color:var(--blue-700);font-weight:600;margin-bottom:14px;letter-spacing:.05em;
+}
+.hcm-otp{
+  display:flex;align-items:center;justify-content:space-between;
+  background:linear-gradient(135deg,var(--blue-600),var(--blue-700));
+  border-radius:10px;padding:12px 14px;
+}
+.hcm-otp-label{font-size:.75rem;color:rgba(255,255,255,.7);margin-bottom:2px}
+.hcm-otp-code{font-family:var(--font-m);font-size:1.4rem;color:#fff;font-weight:700;letter-spacing:.15em}
+.hcm-otp-copy{
+  background:rgba(255,255,255,.2);border:none;border-radius:6px;
+  padding:6px 10px;cursor:pointer;color:#fff;display:flex;align-items:center;gap:4px;
+  font-size:.75rem;font-weight:600;font-family:var(--font-b);
+}
+.hero-card-float{
+  position:absolute;background:var(--white);border-radius:14px;
+  padding:14px 18px;box-shadow:var(--sh2);border:1px solid var(--border);
+}
+.hcf-top{top:-24px;right:-24px;animation:float2 5s ease-in-out infinite}
+.hcf-bot{bottom:-20px;left:-24px;animation:float2 5.5s ease-in-out infinite .5s}
+@keyframes float2{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.hcf-label{font-size:.72rem;color:var(--muted);margin-bottom:4px;font-weight:500}
+.hcf-val{font-family:var(--font-d);font-size:1rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:6px}
+.hcf-dot{width:8px;height:8px;border-radius:50%;background:var(--success)}
+
+/* ── FEATURES ── */
+.features{padding:80px 5%;background:var(--white)}
+.section-header{text-align:center;margin-bottom:52px}
+.section-tag{
+  display:inline-block;background:var(--blue-50);border:1px solid var(--blue-100);
+  color:var(--blue-600);font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  border-radius:999px;padding:5px 14px;margin-bottom:14px;
+}
+.section-title{
+  font-family:var(--font-d);font-size:clamp(1.7rem,3.5vw,2.4rem);
+  font-weight:800;color:var(--text);letter-spacing:-.02em;margin-bottom:12px;
+}
+.section-sub{font-size:1rem;color:var(--muted);max-width:520px;margin:0 auto;line-height:1.7}
+.features-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:24px;max-width:1100px;margin:0 auto;
+}
+.feat-card{
+  background:var(--surf);border:1.5px solid var(--border);border-radius:18px;
+  padding:28px 24px;transition:all .25s;cursor:default;
+}
+.feat-card:hover{border-color:var(--blue-300);box-shadow:var(--sh2);transform:translateY(-4px);background:var(--white)}
+.feat-icon{
+  width:52px;height:52px;border-radius:14px;margin-bottom:18px;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,var(--blue-600),var(--sky));
+  box-shadow:0 8px 20px rgba(37,99,235,.25);
+}
+.feat-icon svg{width:24px;height:24px;color:#fff}
+.feat-title{font-family:var(--font-d);font-size:1.05rem;font-weight:700;color:var(--text);margin-bottom:8px}
+.feat-desc{font-size:.875rem;color:var(--muted);line-height:1.65}
+
+/* ── HOW IT WORKS ── */
+.how{padding:80px 5%;background:var(--bg)}
+.steps{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:24px;max-width:900px;margin:0 auto;position:relative;
+}
+.steps::before{
+  content:'';position:absolute;top:32px;left:15%;right:15%;height:2px;
+  background:linear-gradient(90deg,var(--blue-200),var(--blue-300),var(--blue-200));
+  display:none;
+}
+@media(min-width:640px){.steps::before{display:block}}
+.step{text-align:center;padding:20px}
+.step-num{
+  width:64px;height:64px;border-radius:50%;
+  background:linear-gradient(135deg,var(--blue-600),var(--blue-700));
+  color:#fff;font-family:var(--font-d);font-size:1.4rem;font-weight:800;
+  display:flex;align-items:center;justify-content:center;margin:0 auto 16px;
+  box-shadow:0 8px 20px rgba(37,99,235,.3);position:relative;z-index:1;
+}
+.step-title{font-family:var(--font-d);font-size:1rem;font-weight:700;color:var(--text);margin-bottom:8px}
+.step-desc{font-size:.875rem;color:var(--muted);line-height:1.65}
+
+/* ── CTA BANNER ── */
+.cta-banner{
+  margin:0 5% 80px;border-radius:24px;padding:60px 48px;
+  background:linear-gradient(135deg,var(--blue-700) 0%,var(--blue-600) 50%,var(--sky) 100%);
+  text-align:center;position:relative;overflow:hidden;
+}
+.cta-banner::before{
+  content:'';position:absolute;inset:0;
+  background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+.cta-banner h2{font-family:var(--font-d);font-size:clamp(1.6rem,3vw,2.4rem);font-weight:800;color:#fff;margin-bottom:12px;position:relative}
+.cta-banner p{color:rgba(255,255,255,.8);font-size:1rem;max-width:480px;margin:0 auto 32px;position:relative;line-height:1.7}
+.cta-banner .btn-white{
+  background:#fff;color:var(--blue-700);padding:13px 32px;border-radius:var(--r);
+  font-weight:700;font-size:1rem;border:none;cursor:pointer;font-family:var(--font-b);
+  box-shadow:0 8px 24px rgba(0,0,0,.15);transition:all .2s;display:inline-flex;align-items:center;gap:8px;
+  position:relative;
+}
+.cta-banner .btn-white:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(0,0,0,.2)}
+
+/* ── FOOTER ── */
+.lp-footer{
+  background:var(--blue-900);color:rgba(255,255,255,.7);
+  padding:40px 5%;display:flex;align-items:center;justify-content:space-between;flex-wrap:gap;gap:16px;
+}
+.footer-brand{display:flex;align-items:center;gap:10px}
+.footer-logo-icon{
+  width:32px;height:32px;border-radius:8px;
+  background:linear-gradient(135deg,var(--blue-500),var(--sky));
+  display:flex;align-items:center;justify-content:center;
+}
+.footer-logo-icon svg{width:16px;height:16px;color:#fff}
+.footer-name{font-family:var(--font-d);font-weight:700;color:#fff;font-size:.95rem}
+.footer-copy{font-size:.8rem}
+
+/* ============================================================
+   AUTH PAGE
+============================================================ */
+#page-auth{
+  min-height:100vh;display:flex;
+  background:linear-gradient(160deg,var(--blue-900) 0%,var(--blue-700) 55%,var(--blue-500) 100%);
+}
+.auth-left{
+  flex:0 0 45%;display:flex;flex-direction:column;justify-content:center;
+  padding:60px 60px;position:relative;overflow:hidden;
+}
+.auth-left-bg{
+  position:absolute;inset:0;
+  background:url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M50 50c0-5.523 4.477-10 10-10s10 4.477 10 10-4.477 10-10 10c0 5.523-4.477 10-10 10s-10-4.477-10-10 4.477-10 10-10zM10 10c0-5.523 4.477-10 10-10s10 4.477 10 10-4.477 10-10 10c0 5.523-4.477 10-10 10S0 25.523 0 20s4.477-10 10-10z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+.auth-left-content{position:relative;z-index:1}
+.auth-brand-logo{
+  display:flex;align-items:center;gap:12px;margin-bottom:48px;cursor:pointer;
+}
+.auth-brand-icon{
+  width:44px;height:44px;border-radius:12px;
+  background:rgba(255,255,255,.15);backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.25);
+  display:flex;align-items:center;justify-content:center;
+}
+.auth-brand-icon img{width:26px;height:26px;object-fit:contain;filter:brightness(10)}
+.auth-brand-icon svg{width:22px;height:22px;color:#fff}
+.auth-brand-name{font-family:var(--font-d);font-weight:800;font-size:1.4rem;color:#fff}
+.auth-left h2{
+  font-family:var(--font-d);font-size:2rem;font-weight:800;color:#fff;
+  line-height:1.2;margin-bottom:14px;letter-spacing:-.02em;
+}
+.auth-left p{color:rgba(255,255,255,.7);line-height:1.7;margin-bottom:40px;font-size:.95rem}
+.auth-features{display:flex;flex-direction:column;gap:16px}
+.auth-feat{display:flex;align-items:center;gap:12px}
+.auth-feat-icon{
+  width:36px;height:36px;border-radius:10px;flex-shrink:0;
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
+  display:flex;align-items:center;justify-content:center;
+}
+.auth-feat-icon svg{width:16px;height:16px;color:rgba(255,255,255,.9)}
+.auth-feat span{color:rgba(255,255,255,.85);font-size:.9rem;font-weight:500}
+
+.auth-right{
+  flex:1;display:flex;align-items:center;justify-content:center;
+  padding:40px 40px 40px 0;
+}
+.auth-card{
+  width:100%;max-width:440px;background:var(--white);
+  border-radius:24px;padding:36px 36px;box-shadow:0 24px 80px rgba(0,0,0,.25);
+}
+.auth-card-title{
+  font-family:var(--font-d);font-size:1.5rem;font-weight:800;color:var(--text);
+  margin-bottom:4px;
+}
+.auth-card-sub{font-size:.875rem;color:var(--muted);margin-bottom:24px}
+.tabs{display:flex;background:var(--blue-50);border-radius:10px;padding:4px;margin-bottom:24px}
+.tab-btn{
+  flex:1;padding:9px;border:none;background:none;border-radius:7px;
+  font-size:.875rem;font-weight:600;cursor:pointer;transition:all .2s;
+  font-family:var(--font-b);color:var(--muted);
+}
+.tab-btn.active{background:var(--white);color:var(--blue-700);box-shadow:0 2px 8px rgba(37,99,235,.12)}
+
+/* ── Form inputs ── */
+.form-group{margin-bottom:16px}
+.form-label{display:block;font-size:.8rem;font-weight:600;color:var(--text);margin-bottom:6px}
+.input-wrap{position:relative}
+.input-icon{
+  position:absolute;left:12px;top:50%;transform:translateY(-50%);
+  pointer-events:none;color:var(--dim);display:flex;
+}
+.input-icon svg{width:16px;height:16px}
+.form-input{
+  width:100%;padding:10px 12px 10px 38px;
+  border:1.5px solid var(--border2);border-radius:var(--rs);
+  background:var(--surf);color:var(--text);font-size:.9rem;
+  font-family:var(--font-b);transition:border-color .2s,box-shadow .2s;outline:none;
+}
+.form-input:focus{border-color:var(--blue-500);box-shadow:0 0 0 3px rgba(37,99,235,.1);background:#fff}
+.form-input::placeholder{color:var(--dim)}
+.pass-toggle{
+  position:absolute;right:10px;top:50%;transform:translateY(-50%);
+  background:none;border:none;cursor:pointer;color:var(--dim);display:flex;padding:4px;
+  transition:color .2s;
+}
+.pass-toggle:hover{color:var(--blue-600)}
+.pass-toggle svg{width:16px;height:16px}
+.remember-row{display:flex;align-items:center;gap:8px;margin-bottom:16px}
+.check-input{
+  width:16px;height:16px;border-radius:4px;border:1.5px solid var(--border2);
+  appearance:none;cursor:pointer;position:relative;background:var(--surf);transition:all .2s;
+}
+.check-input:checked{background:var(--blue-600);border-color:var(--blue-600)}
+.check-input:checked::after{
+  content:'';position:absolute;left:4px;top:2px;
+  width:5px;height:8px;border:2px solid #fff;
+  border-top:none;border-left:none;transform:rotate(45deg);
+}
+.check-label{font-size:.8rem;color:var(--muted);font-weight:500;cursor:pointer}
+
+/* ── Strength meter ── */
+.strength-bar{display:flex;gap:4px;margin-top:6px}
+.strength-seg{height:3px;flex:1;border-radius:2px;background:var(--border);transition:background .3s}
+.strength-seg.active.s1{background:var(--danger)}
+.strength-seg.active.s2{background:var(--warn)}
+.strength-seg.active.s3{background:var(--success)}
+.strength-seg.active.s4{background:var(--blue-600)}
+.strength-text{font-size:.72rem;color:var(--muted);margin-top:3px}
+
+/* ── Submit button ── */
+.btn-submit{
+  width:100%;padding:12px;border-radius:var(--rs);border:none;
+  background:linear-gradient(135deg,var(--blue-600),var(--blue-700));
+  color:#fff;font-size:.95rem;font-weight:700;cursor:pointer;
+  font-family:var(--font-b);transition:all .2s;
+  box-shadow:0 4px 16px rgba(37,99,235,.3);
+  display:flex;align-items:center;justify-content:center;gap:8px;margin-top:6px;
+}
+.btn-submit:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(37,99,235,.4)}
+.btn-submit:disabled{opacity:.6;cursor:not-allowed;transform:none}
+
+/* ── Alert ── */
+.alert{
+  display:none;padding:10px 14px;border-radius:var(--rs);
+  font-size:.85rem;font-weight:500;margin-bottom:14px;
+  display:flex;align-items:center;gap:8px;
+}
+.alert svg{width:16px;height:16px;flex-shrink:0}
+.alert-error{background:#fef2f2;color:#b91c1c;border:1px solid #fecaca;display:none}
+.alert-error.show{display:flex}
+.alert-success{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;display:none}
+.alert-success.show{display:flex}
+
+/* ── Back link ── */
+.back-link{
+  margin-top:16px;text-align:center;font-size:.83rem;
+  color:rgba(255,255,255,.6);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  transition:color .2s;
+}
+.back-link:hover{color:#fff}
+.back-link svg{width:14px;height:14px}
+
+/* ── Loading spinner ── */
+.spinner{
+  width:16px;height:16px;border:2px solid rgba(255,255,255,.3);
+  border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── Responsive ── */
+@media(max-width:900px){
+  .hero-inner{grid-template-columns:1fr;gap:40px}
+  .hero-right{display:none}
+  .auth-left{display:none}
+  #page-auth{justify-content:center;align-items:center;padding:24px}
+  .auth-right{padding:0}
+  .auth-card{padding:28px 24px}
+}
+@media(max-width:600px){
+  .lp-nav .nav-links{display:none}
+  .cta-banner{padding:40px 24px;margin:0 4% 60px}
+  .hero-ctas{flex-direction:column}
+  .btn-hero{justify-content:center}
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     LANDING PAGE
+============================================================ -->
+<div id="page-landing">
+
+  <!-- Nav -->
+  <nav class="lp-nav">
+    <div class="nav-logo">
+      <div class="nav-logo-icon" id="nav-logo-icon">
+        <!-- Akan diganti logo jika logoIconUrl diset -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <span class="nav-logo-text">NokosOTP</span>
+    </div>
+    <div class="nav-links">
+      <a href="#features">Fitur</a>
+      <a href="#how">Cara Kerja</a>
+    </div>
+    <div class="nav-actions">
+      <button class="btn-outline" onclick="showAuth('login')">Masuk</button>
+      <button class="btn-primary" onclick="showAuth('register')">Daftar Gratis</button>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero" id="hero">
+    <div class="hero-bg">
+      <div class="hero-grid"></div>
+      <div class="hero-orb1"></div>
+      <div class="hero-orb2"></div>
+    </div>
+    <div class="hero-inner">
+      <div class="hero-left">
+        <div class="hero-badge">
+          <span class="hero-badge-dot"></span>
+          <span>2 Server Premium Aktif</span>
+        </div>
+        <h1 class="hero-title">OTP Instan,<br><em>Aman & Terpercaya</em></h1>
+        <p class="hero-sub">Dapatkan nomor OTP virtual dari seluruh dunia dengan 2 provider terbaik. Cepat, murah, dan terjamin keamanannya.</p>
+        <div class="hero-ctas">
+          <button class="btn-hero btn-hero-primary" onclick="showAuth('register')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            Mulai Sekarang
+          </button>
+          <button class="btn-hero btn-hero-secondary" onclick="showAuth('login')">
+            Sudah Punya Akun? Masuk
+          </button>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat"><div class="num">2</div><div class="lbl">Provider OTP</div></div>
+          <div class="hero-stat"><div class="num">500+</div><div class="lbl">Layanan Tersedia</div></div>
+          <div class="hero-stat"><div class="num">50+</div><div class="lbl">Negara Didukung</div></div>
+        </div>
+      </div>
+      <div class="hero-right">
+        <div class="hero-card-main">
+          <div class="hcm-header">
+            <div class="hcm-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <div>
+              <div class="hcm-title">WhatsApp</div>
+              <div class="hcm-sub">Server 1 · Indonesia</div>
+            </div>
+          </div>
+          <div class="hcm-phone">+62 819 XXXX 7843</div>
+          <div class="hcm-otp">
+            <div>
+              <div class="hcm-otp-label">Kode OTP</div>
+              <div class="hcm-otp-code">584 291</div>
+            </div>
+            <button class="hcm-otp-copy">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              Salin
+            </button>
+          </div>
+        </div>
+        <div class="hero-card-float hcf-top">
+          <div class="hcf-label">Status Server</div>
+          <div class="hcf-val"><div class="hcf-dot"></div> Semua Online</div>
+        </div>
+        <div class="hero-card-float hcf-bot">
+          <div class="hcf-label">Transaksi Hari Ini</div>
+          <div class="hcf-val">1.2K+ Order</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="features" id="features">
+    <div class="section-header">
+      <div class="section-tag">Fitur Unggulan</div>
+      <h2 class="section-title">Mengapa Memilih NokosOTP?</h2>
+      <p class="section-sub">Platform OTP paling lengkap dengan dual server dan keamanan tingkat enterprise.</p>
+    </div>
+    <div class="features-grid" id="features-grid"></div>
+  </section>
+
+  <!-- How it works -->
+  <section class="how" id="how">
+    <div class="section-header">
+      <div class="section-tag">Cara Kerja</div>
+      <h2 class="section-title">3 Langkah Mudah</h2>
+      <p class="section-sub">Proses pembelian OTP yang simpel dan cepat.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-title">Daftar & Deposit</div>
+        <div class="step-desc">Buat akun gratis dan isi saldo menggunakan berbagai metode pembayaran tersedia.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-title">Pilih Layanan</div>
+        <div class="step-desc">Pilih platform yang diinginkan, pilih negara & operator, lalu beli nomor OTP.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-title">Terima OTP</div>
+        <div class="step-desc">Kode OTP diterima otomatis dan ditampilkan di dashboard dalam hitungan detik.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Banner -->
+  <div class="cta-banner">
+    <h2>Siap Mulai? Daftar Sekarang Gratis!</h2>
+    <p>Bergabunglah dan mulai beli OTP instan dari ratusan layanan populer di seluruh dunia.</p>
+    <button class="btn-white" onclick="showAuth('register')">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      Mulai Gratis
+    </button>
+  </div>
+
+  <!-- Footer -->
+  <footer class="lp-footer">
+    <div class="footer-brand">
+      <div class="footer-logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <span class="footer-name">NokosOTP</span>
+    </div>
+    <span class="footer-copy">© 2025 NokosOTP. Semua hak dilindungi.</span>
+  </footer>
+</div>
+
+<!-- ============================================================
+     AUTH PAGE
+============================================================ -->
+<div id="page-auth" class="page hidden">
+  <div class="auth-left">
+    <div class="auth-left-bg"></div>
+    <div class="auth-left-content">
+      <div class="auth-brand-logo" onclick="showLanding()">
+        <div class="auth-brand-icon" id="auth-brand-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <span class="auth-brand-name">NokosOTP</span>
+      </div>
+      <h2>Platform OTP<br>Terpercaya & Instan</h2>
+      <p>Bergabunglah dengan ribuan pengguna yang sudah menggunakan layanan OTP premium kami.</p>
+      <div class="auth-features">
+        <div class="auth-feat">
+          <div class="auth-feat-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+          <span>OTP diterima dalam hitungan detik</span>
+        </div>
+        <div class="auth-feat">
+          <div class="auth-feat-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+          <span>Keamanan transaksi berlapis</span>
+        </div>
+        <div class="auth-feat">
+          <div class="auth-feat-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+          <span>Jangkauan 50+ negara, 500+ layanan</span>
+        </div>
+        <div class="auth-feat">
+          <div class="auth-feat-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></div>
+          <span>Auto-refund jika OTP tidak diterima</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="auth-right">
+    <div>
+      <div class="auth-card">
+        <div class="auth-card-title" id="auth-title">Selamat Datang</div>
+        <div class="auth-card-sub" id="auth-sub">Masuk ke akun NokosOTP kamu</div>
+
+        <div class="tabs">
+          <button class="tab-btn active" id="tab-login" onclick="switchTab('login')">Masuk</button>
+          <button class="tab-btn" id="tab-register" onclick="switchTab('register')">Daftar</button>
+        </div>
+
+        <!-- Alert -->
+        <div class="alert alert-error" id="alert-error">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span id="alert-error-text"></span>
+        </div>
+        <div class="alert alert-success" id="alert-success">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          <span id="alert-success-text"></span>
+        </div>
+
+        <!-- LOGIN FORM -->
+        <div id="form-login">
+          <div class="form-group">
+            <label class="form-label">Username atau Email</label>
+            <div class="input-wrap">
+              <span class="input-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+              <input type="text" class="form-input" id="login-login" placeholder="username atau email" autocomplete="username"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <div class="input-wrap">
+              <span class="input-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+              <input type="password" class="form-input" id="login-password" placeholder="••••••••" autocomplete="current-password"/>
+              <button type="button" class="pass-toggle" onclick="togglePass('login-password',this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="remember-row">
+            <input type="checkbox" class="check-input" id="remember"/>
+            <label class="check-label" for="remember">Ingat saya selama 7 hari</label>
+          </div>
+          <button class="btn-submit" id="btn-login" onclick="doLogin()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+            Masuk
+          </button>
+        </div>
+
+        <!-- REGISTER FORM -->
+        <div id="form-register" style="display:none">
+          <div class="form-group">
+            <label class="form-label">Username</label>
+            <div class="input-wrap">
+              <span class="input-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+              <input type="text" class="form-input" id="reg-username" placeholder="min 3 karakter, huruf & angka" autocomplete="username"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <div class="input-wrap">
+              <span class="input-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></span>
+              <input type="email" class="form-input" id="reg-email" placeholder="email@kamu.com" autocomplete="email"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <div class="input-wrap">
+              <span class="input-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+              <input type="password" class="form-input" id="reg-password" placeholder="min 8 karakter" autocomplete="new-password" oninput="checkStrength(this.value)"/>
+              <button type="button" class="pass-toggle" onclick="togglePass('reg-password',this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+            <div class="strength-bar"><div class="strength-seg" id="s1"></div><div class="strength-seg" id="s2"></div><div class="strength-seg" id="s3"></div><div class="strength-seg" id="s4"></div></div>
+            <div class="strength-text" id="strength-text"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Konfirmasi Password</label>
+            <div class="input-wrap">
+              <span class="input-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+              <input type="password" class="form-input" id="reg-confirm" placeholder="ulangi password" autocomplete="new-password"/>
+              <button type="button" class="pass-toggle" onclick="togglePass('reg-confirm',this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+          </div>
+          <button class="btn-submit" id="btn-register" onclick="doRegister()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+            Buat Akun
+          </button>
+        </div>
+      </div>
+      <div class="back-link" onclick="showLanding()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        Kembali ke beranda
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── SVG Icons ────────────────────────────────────────────────
+const FEAT_ICONS = {
+  zap:`<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>`,
+  shield:`<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
+  globe:`<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`,
+  wallet:`<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>`,
+};
+
+const FEATURES = [
+  {icon:'zap',    title:'Proses Kilat',    desc:'Nomor OTP tersedia dalam hitungan detik dari ribuan layanan populer.'},
+  {icon:'shield', title:'Aman & Terjamin', desc:'Keamanan transaksi berlapis dengan sistem anti-fraud dan refund otomatis.'},
+  {icon:'globe',  title:'Jangkauan Global',desc:'Dukungan ratusan negara & operator dari 2 server premium internasional.'},
+  {icon:'wallet', title:'Harga Terjangkau',desc:'Harga kompetitif mulai Rp500 tanpa biaya tersembunyi sama sekali.'},
+];
+
+// Render feature cards
+document.getElementById('features-grid').innerHTML = FEATURES.map(f=>`
+<div class="feat-card">
+  <div class="feat-icon">${FEAT_ICONS[f.icon]||FEAT_ICONS.zap}</div>
+  <div class="feat-title">${f.title}</div>
+  <div class="feat-desc">${f.desc}</div>
+</div>`).join('');
+
+// ── Auth redirect check ──────────────────────────────────────
+(async()=>{
+  try{
+    const r=await fetch('/api/auth/me',{credentials:'include'});
+    if(r.ok) window.location.replace('/');
+  }catch(_){}
+})();
+
+// ── Page transitions ─────────────────────────────────────────
+function showAuth(tab='login'){
+  document.getElementById('page-landing').classList.add('hidden');
+  const auth=document.getElementById('page-auth');
+  auth.classList.remove('hidden');
+  auth.scrollTop=0;
+  switchTab(tab);
+  hideAlerts();
+}
+function showLanding(){
+  document.getElementById('page-auth').classList.add('hidden');
+  document.getElementById('page-landing').classList.remove('hidden');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ── Tab switch ───────────────────────────────────────────────
+function switchTab(tab){
+  document.getElementById('form-login').style.display = tab==='login'?'':'none';
+  document.getElementById('form-register').style.display = tab==='register'?'':'none';
+  document.getElementById('tab-login').classList.toggle('active',tab==='login');
+  document.getElementById('tab-register').classList.toggle('active',tab==='register');
+  document.getElementById('auth-title').textContent = tab==='login'?'Selamat Datang':'Buat Akun Baru';
+  document.getElementById('auth-sub').textContent = tab==='login'?'Masuk ke akun NokosOTP kamu':'Daftar dan mulai beli OTP instan';
+  hideAlerts();
+}
+
+function showAlert(type,msg){
+  hideAlerts();
+  const el=document.getElementById('alert-'+type);
+  document.getElementById('alert-'+type+'-text').textContent=msg;
+  el.classList.add('show');
+}
+function hideAlerts(){
+  document.querySelectorAll('.alert').forEach(e=>e.classList.remove('show'));
+}
+
+function togglePass(id,btn){
+  const inp=document.getElementById(id);
+  const isPass=inp.type==='password';
+  inp.type=isPass?'text':'password';
+  btn.innerHTML=isPass
+    ?`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`
+    :`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
+}
+
+function checkStrength(pw){
+  const segs=[1,2,3,4];
+  let score=0;
+  if(pw.length>=8)score++;
+  if(/[A-Z]/.test(pw))score++;
+  if(/[0-9]/.test(pw))score++;
+  if(/[^A-Za-z0-9]/.test(pw))score++;
+  const labels=['','Lemah','Sedang','Kuat','Sangat Kuat'];
+  const cls=['','s1','s2','s3','s4'];
+  segs.forEach(i=>{
+    const el=document.getElementById('s'+i);
+    el.className='strength-seg'+(i<=score?' active '+cls[score]:'');
+  });
+  document.getElementById('strength-text').textContent=score>0?labels[score]:'';
+}
+
+function setLoading(id,on){
+  const btn=document.getElementById(id);
+  if(!btn)return;
+  btn.disabled=on;
+  if(on){btn._orig=btn.innerHTML;btn.innerHTML='<div class="spinner"></div>';}
+  else{btn.innerHTML=btn._orig||btn.innerHTML;}
+}
+
+// ── Login ────────────────────────────────────────────────────
+async function doLogin(){
+  const login=document.getElementById('login-login').value.trim();
+  const password=document.getElementById('login-password').value;
+  const remember=document.getElementById('remember').checked;
+  hideAlerts();
+  if(!login||!password){showAlert('error','Isi semua field.');return;}
+  setLoading('btn-login',true);
+  try{
+    const r=await fetch('/api/auth/login',{
+      method:'POST',credentials:'include',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({login,password,remember})
+    });
+    const d=await r.json();
+    if(d.success){showAlert('success','Berhasil! Mengalihkan...');setTimeout(()=>window.location.replace('/'),800);}
+    else{showAlert('error',d.error||'Login gagal.');}
+  }catch(e){showAlert('error','Koneksi error.');}
+  setLoading('btn-login',false);
+}
+
+// ── Register ─────────────────────────────────────────────────
+async function doRegister(){
+  const username=document.getElementById('reg-username').value.trim();
+  const email=document.getElementById('reg-email').value.trim();
+  const password=document.getElementById('reg-password').value;
+  const confirm=document.getElementById('reg-confirm').value;
+  hideAlerts();
+  if(!username||!email||!password||!confirm){showAlert('error','Isi semua field.');return;}
+  if(!/^[a-zA-Z0-9_]{3,50}$/.test(username)){showAlert('error','Username: 3–50 karakter, huruf/angka/_');return;}
+  if(password.length<8){showAlert('error','Password minimal 8 karakter.');return;}
+  if(password!==confirm){showAlert('error','Password tidak cocok.');return;}
+  setLoading('btn-register',true);
+  try{
+    const r=await fetch('/api/auth/register',{
+      method:'POST',credentials:'include',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({username,email,password})
+    });
+    const d=await r.json();
+    if(d.success){showAlert('success','Akun berhasil dibuat! Masuk...');setTimeout(()=>window.location.replace('/'),1000);}
+    else{showAlert('error',d.error||'Pendaftaran gagal.');}
+  }catch(e){showAlert('error','Koneksi error.');}
+  setLoading('btn-register',false);
+}
+
+// Enter key
+document.addEventListener('keydown',e=>{
+  if(e.key!=='Enter')return;
+  const loginVisible=document.getElementById('form-login').style.display!=='none';
+  if(loginVisible)doLogin();else doRegister();
+});
+</script>
+</body>
+</html>
