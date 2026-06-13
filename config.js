@@ -10,10 +10,12 @@ module.exports = {
   // ── Server ────────────────────────────────────────────── 
   server: {
     port: 3000,
-    baseUrl: 'http://private.pterokudesu.web.id:5016',        // Ganti dengan domain produksi
+    baseUrl: 'http://private.pterokudesu.web.id:5016',
     sessionSecret: 'Jee#sSdg$hssux@73&2#eycyzr?sgv$fxgxaocfyez38',
     cookieMaxAge: 7 * 24 * 60 * 60 * 1000,  // 7 hari (remember me)
     cookieMaxAgeShort: 24 * 60 * 60 * 1000, // 1 hari (session biasa)
+    secureCookie: false, // Set true di produksi dengan HTTPS
+    corsOrigins: ['http://private.pterokudesu.web.id:5016', 'http://localhost:3000'],
   },
 
   // ── Supabase ─────────────────────────────────────────────
@@ -67,10 +69,9 @@ module.exports = {
     otpMaxPollDuration: 20 * 60 * 1000,
 
     // ── Branding / Icon ──────────────────────────────────────
-    // Isi URL favicon dan logo kamu di sini
-    faviconUrl: 'https://cdn.shirokode.web.id/files/ZZIcYlXRZ4.jpeg',          // cth: https://yourdomain.com/favicon.ico
-    logoUrl: 'https://cdn.shirokode.web.id/files/ZZIcYlXRZ4.jpeg',                              // cth: https://yourdomain.com/logo.png  (kosong = pakai teks)
-    logoIconUrl: 'https://cdn.shirokode.web.id/files/ZZIcYlXRZ4.jpeg',       // cth: https://yourdomain.com/icon.png  (64x64px)
+    faviconUrl: 'https://cdn.shirokode.web.id/files/ZZIcYlXRZ4.jpeg',
+    logoUrl: 'https://cdn.shirokode.web.id/files/ZZIcYlXRZ4.jpeg',
+    logoIconUrl: 'https://cdn.shirokode.web.id/files/ZZIcYlXRZ4.jpeg',
 
     // ── Kontak & Link Sosial ──────────────────────────────────
     supportEmail: 'jeeyhosting@gmail.com',
