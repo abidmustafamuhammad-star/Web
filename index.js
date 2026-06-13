@@ -2,7 +2,7 @@
 
 // ============================================================
 // NOKOS OTP — Main Server (index.js)
-// Install: npm install express @supabase/supabase-js bcrypt axios cookie-parser
+// Install: npm install express @supabase/supabase-js bcrypt axios cookie-parser cors
 // Start  : node index.js
 // ============================================================
 
@@ -13,6 +13,7 @@ const crypto     = require('crypto');
 const axios      = require('axios');
 const cookieParser = require('cookie-parser');
 const path       = require('path');
+const cors       = require('cors');
 const config     = require('./config');
 console.log('CONFIG PORT =', config.server.port);
 console.log('CONFIG FILE =', require.resolve('./config'));
@@ -33,6 +34,12 @@ const webhookLockStore   = new Set(); // "source:orderId" — prevent replay
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 app.use(cookieParser());
+
+// CORS
+app.use(cors({
+  origin: config.server.corsOrigins,
+  credentials: true,
+}));
 
 // Security headers
 app.use((req, res, next) => {
@@ -171,8 +178,16 @@ async function pakasirTxDetail(orderId, amount) {
 // ============================================================
 // STATIC FILES
 // ============================================================
-app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'menu.html')));
-app.get('/login', (req, res) => res.sendFile(path.join(__dirname, 'login.html')));
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'login.html'), { 
+    headers: { 'Content-Type': 'text/html; charset=utf-8' }
+  });
+});
+app.get('/dashboard', (req, res) => {
+  res.sendFile(path.join(__dirname, 'main.html'), {
+    headers: { 'Content-Type': 'text/html; charset=utf-8' }
+  });
+});
 
 // ============================================================
 // AUTH ROUTES
@@ -207,7 +222,7 @@ app.post('/api/auth/register', async (req, res) => {
 
     const passwordHash = await bcrypt.hash(password, config.security.bcryptRounds);
     const { data: user, error } = await db.from('users')
-      .insert({ username, email, password_hash: passwordHash })
+      .insert({ username, email, password_hash: passwordHash, balance: 0 })
       .select('id, username, email')
       .single();
     if (error) throw error;
@@ -246,7 +261,7 @@ app.post('/api/auth/login', async (req, res) => {
     const { data: user } = await db.from('users')
       .select('*')
       .eq(isEmail ? 'email' : 'username', login)
-      .single();
+      .maybeSingle();
 
     const valid = user && await bcrypt.compare(password, user.password_hash);
 
@@ -280,7 +295,7 @@ app.post('/api/auth/login', async (req, res) => {
 
     res.cookie('session', token, {
       httpOnly: true,
-      secure: false, // Set true di produksi dengan HTTPS
+      secure: config.server.secureCookie,
       sameSite: 'strict',
       maxAge: remember ? config.server.cookieMaxAge : config.server.cookieMaxAgeShort,
     });
@@ -529,7 +544,7 @@ app.get('/api/order/:orderId/status', authMiddleware, async (req, res) => {
   try {
     const { orderId } = req.params;
     const { data: order } = await db.from('otp_orders')
-      .select('*').eq('id', orderId).eq('user_id', req.user.id).single();
+      .select('*').eq('id', orderId).eq('user_id', req.user.id).maybeSingle();
     if (!order) return res.status(404).json({ success: false, error: 'Order tidak ditemukan.' });
 
     // If still active, poll provider
@@ -602,7 +617,7 @@ app.post('/api/order/cancel', authMiddleware, async (req, res) => {
   try {
     const { order_id } = req.body;
     const { data: order } = await db.from('otp_orders')
-      .select('*').eq('id', order_id).eq('user_id', userId).single();
+      .select('*').eq('id', order_id).eq('user_id', userId).maybeSingle();
     if (!order) return res.status(404).json({ success: false, error: 'Order tidak ditemukan.' });
     if (order.status !== 'ACTIVE') return res.status(400).json({ success: false, error: 'Order tidak dapat dibatalkan.' });
 
@@ -637,7 +652,7 @@ app.post('/api/order/finish', authMiddleware, async (req, res) => {
   try {
     const { order_id } = req.body;
     const { data: order } = await db.from('otp_orders')
-      .select('*').eq('id', order_id).eq('user_id', req.user.id).single();
+      .select('*').eq('id', order_id).eq('user_id', req.user.id).maybeSingle();
     if (!order) return res.status(404).json({ success: false, error: 'Order tidak ditemukan.' });
 
     try {
@@ -765,7 +780,7 @@ app.get('/api/deposit/status/:invoice', authMiddleware, async (req, res) => {
   try {
     const { invoice } = req.params;
     const { data: deposit } = await db.from('deposits')
-      .select('*').eq('invoice', invoice).eq('user_id', req.user.id).single();
+      .select('*').eq('invoice', invoice).eq('user_id', req.user.id).maybeSingle();
     if (!deposit) return res.status(404).json({ success: false, error: 'Invoice tidak ditemukan.' });
 
     // If pending, cross-check with Pakasir
@@ -781,7 +796,7 @@ app.get('/api/deposit/status/:invoice', authMiddleware, async (req, res) => {
       }
     }
 
-    const { data: updated } = await db.from('deposits').select('*').eq('invoice', invoice).single();
+    const { data: updated } = await db.from('deposits').select('*').eq('invoice', invoice).maybeSingle();
     res.json({ success: true, deposit: updated });
   } catch (e) {
     res.status(500).json({ success: false, error: 'Gagal memeriksa status.' });
@@ -794,7 +809,7 @@ app.post('/api/deposit/cancel', authMiddleware, async (req, res) => {
   try {
     const { invoice } = req.body;
     const { data: deposit } = await db.from('deposits')
-      .select('*').eq('invoice', invoice).eq('user_id', userId).single();
+      .select('*').eq('invoice', invoice).eq('user_id', userId).maybeSingle();
     if (!deposit) return res.status(404).json({ success: false, error: 'Invoice tidak ditemukan.' });
     if (deposit.status !== 'pending') return res.status(400).json({ success: false, error: 'Deposit tidak dapat dibatalkan.' });
 
@@ -823,7 +838,7 @@ async function processDeposit(orderId, amount, userId, source) {
     // Check if already processed
     const { data: dep } = await db.from('deposits')
       .select('id, status, user_id, amount')
-      .eq('invoice', orderId).single();
+      .eq('invoice', orderId).maybeSingle();
 
     if (!dep || dep.status === 'completed') return { skip: true };
     if (dep.amount !== amount) throw new Error('Amount mismatch');
@@ -897,7 +912,7 @@ app.post('/api/webhook/pakasir', async (req, res) => {
 
     // Find deposit by invoice
     const { data: deposit } = await db.from('deposits')
-      .select('id, user_id, amount, status').eq('invoice', order_id).single();
+      .select('id, user_id, amount, status').eq('invoice', order_id).maybeSingle();
 
     if (!deposit) {
       await db.from('webhook_logs').update({ processed: false }).eq('order_id', String(order_id)).eq('source', 'pakasir');
@@ -955,7 +970,7 @@ app.use((err, req, res, next) => {
 app.listen(config.server.port, () => {
   log.info(`${config.app.appName} running on port ${config.server.port}`);
   log.info(`URL: ${config.server.baseUrl}`);
-  log.info('Dependencies: npm install express @supabase/supabase-js bcrypt axios cookie-parser');
+  log.info('Dependencies: npm install express @supabase/supabase-js bcrypt axios cookie-parser cors');
 });
 
 module.exports = app;
